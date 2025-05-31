@@ -1,6 +1,8 @@
 package net.druidlabs.mindsync;
 
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.GridView;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +18,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notes.Notes;
+import net.druidlabs.mindsync.notes.NotesArrayAdapter;
 
 import java.util.List;
 
@@ -44,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Note> notesList;
 
+    private NotesArrayAdapter<Note> notesArrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +71,18 @@ public class MainActivity extends AppCompatActivity {
         expandAddFab = findViewById(R.id.home_expand_add_fab);
         addNoteFab = findViewById(R.id.home_add_note_fab);
 
+        Note note1 = new Note("Cook food", "I am someone who is going through a lot.");
+        Note note2 = new Note("Make happy", "Do I regret some of my life decisions?");
+        Note note3 = new Note("Random tappy", "Tappy tapp taptt apfd");
+
         notesList = Notes.getNotes();
+
+        notesArrayAdapter = new NotesArrayAdapter<>(MainActivity.this, R.layout.custom_notes_tiles, notesList);
+
+        notesListGridView.setAdapter(notesArrayAdapter);
+
+        setSupportActionBar(homeToolbar);
+
+        notesArrayAdapter.notifyDataSetChanged();
     }
 }
