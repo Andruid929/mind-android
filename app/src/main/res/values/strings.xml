@@ -1,3 +1,10 @@
 <resources>
+    <!-- App wide -->
     <string name="app_name">Mind Editor</string>
+    <string name="mind_acronym">Moda Is Never Dead</string>
+
+    <!-- Home page (MainActivity) -->
+    <string name="home_add_note_btn">Add new note</string>
+    <string name="home_expand_add_btn">Show add note buttons</string>
+
 </resources>
