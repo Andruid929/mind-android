@@ -1,11 +1,13 @@
 package net.druidlabs.mindsync;
 
 import android.os.Bundle;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -71,15 +73,25 @@ public class MainActivity extends AppCompatActivity {
         expandAddFab = findViewById(R.id.home_expand_add_fab);
         addNoteFab = findViewById(R.id.home_add_note_fab);
 
-        Note note1 = new Note("Cook food", "I am someone who is going through a lot.");
-        Note note2 = new Note("Make happy", "Do I regret some of my life decisions?");
-        Note note3 = new Note("Random tappy", "Tappy tapp taptt apfd");
+        Note note1 = new Note("Test Note 1", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
+        Note note2 = new Note("Test Note 2", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
+        Note note3 = new Note("Test Note 3", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
 
         notesList = Notes.getNotes();
+
+        TextView devUrlText = homeNavigationView.getHeaderView(0).findViewById(R.id.menu_dev_url);
+        devUrlText.setMovementMethod(LinkMovementMethod.getInstance());
 
         notesArrayAdapter = new NotesArrayAdapter<>(MainActivity.this, R.layout.custom_notes_tiles, notesList);
 
         notesListGridView.setAdapter(notesArrayAdapter);
+
+        homeNavigationView.bringToFront();
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout,
+                R.string.home_drawer_open_desc, R.string.home_drawer_close_desc);
+        homeDrawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
 
         setSupportActionBar(homeToolbar);
 

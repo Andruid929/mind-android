@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/textPrimaryColour"
+        android:background="@color/colourPrimary"
         android:gravity="bottom"
         android:orientation="vertical"
         android:padding="15dp">
@@ -15,17 +15,20 @@
             android:src="@mipmap/ic_mindsync_launcher_foreground" />
 
     <TextView
+            android:id="@+id/menu_app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:textColor="@color/white"
+            android:textColor="@color/textPrimaryColour"
             android:textSize="24sp" />
 
     <TextView
+            android:id="@+id/menu_dev_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/developer_url"
-            android:textColor="@color/white"
+            android:textColor="@color/textPrimaryColour"
+            android:textColorLink="@color/textPrimaryColour"
             android:textSize="20sp" />
 
 </LinearLayout>

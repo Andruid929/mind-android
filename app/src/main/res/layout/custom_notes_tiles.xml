@@ -3,9 +3,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/note_cardview"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="170dp"
+        android:layout_margin="20dp"
         android:elevation="10dp"
-        android:backgroundTint="@color/transparent"
+        android:padding="10dp"
         app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,20 +21,22 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:text="@string/cnt_default_header"
-                android:textSize="40sp"
-                android:layout_margin="5sp"
+                android:textColor="@color/textPrimaryColour"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                android:layout_margin="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
         <TextView
                 android:id="@+id/note_body_textview"
                 android:layout_width="match_parent"
-                android:layout_height="135dp"
+                android:layout_height="100dp"
                 app:layout_constraintTop_toBottomOf="@id/note_heading_textview"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="15dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/textPrimaryColour"
                 android:text="@string/cnt_default_body"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

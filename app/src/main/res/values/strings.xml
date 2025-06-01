@@ -2,7 +2,8 @@
     <!-- App wide -->
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
-    <string name="developer_url">www.druidlabs.net</string>
+    <string name="developer_url">By <a href="https://github.com/Andruid929/">Andruid929</a>
+    </string>
 
 
     <!-- Home page (MainActivity) -->
@@ -11,6 +12,9 @@
     <!-- Home drawer menu -->
     <string name="home_menu_settings">Settings</string>
     <string name="home_menu_header_content_desc">Mind Editor icon</string>
+    <string name="home_drawer_open_desc">Open drawer</string>
+    <string name="home_drawer_close_desc">Close drawer</string>
+    <string name="home_menu_app_info">App info</string>
     <!-- Custom note tiles -->
     <string name="cnt_default_header">Note header</string>
     <string name="cnt_default_body">This is a default note body</string>
@@ -18,8 +22,7 @@
 
     <!-- Note Editor Activity -->
     <string name="editor_default_note_header">Note header</string>
-    <string name="editor_body_hint">Note body here</string>
+    <string name="editor_body_hint">Start typing</string>
     <string name="editor_heading_hint">Note heading here</string>
-
 
 </resources>

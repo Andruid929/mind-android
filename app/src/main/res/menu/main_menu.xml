@@ -8,6 +8,12 @@
             android:icon="@drawable/menu_settings"
             android:title="@string/home_menu_settings" />
 
+        <item
+                android:id="@+id/app_info_menu_item"
+                android:icon="@drawable/menu_app_info"
+                android:title="@string/home_menu_app_info"
+                />
+
     </group>
 
 </menu>
