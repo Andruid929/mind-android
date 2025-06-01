@@ -46,7 +46,7 @@ public final class Notes {
     }
 
     /**
-     * Populate an existing {@link Collection}{@code <}{@link Note}{@code >} and return it.
+     * Populate an existing {@link Collection Collection&lt;Note&gt;} and return it.
      *
      * @param collection an object of a class that implements a {@link Collection} of type {@code Note}.
      * @return the specified {@code collection} populated with all initialised notes.

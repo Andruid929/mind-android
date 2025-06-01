@@ -11,10 +11,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-
 import net.druidlabs.mindsync.R;
 
 import java.util.List;
+
+/**
+ * This class is what allows the user to interact with the {@code List<Note>}.
+ *
+ * @author Andrew Jones
+ * @see android.widget.ArrayAdapter ArrayAdapter
+ * @since 0.2.0
+ * @version 1.0
+ * */
 
 public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
 
@@ -66,6 +74,15 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
 
         return convertView;
     }
+
+    /**
+     * This inner class allows the ArrayAdapter to implement the
+     * view holder pattern to increase scrolling performance in the view.
+     *
+     * @author Andrew Jones
+     * @since 0.2.0
+     * @version 1.0
+     * */
 
     private static class ViewHolder {
         private CardView noteCardView;
