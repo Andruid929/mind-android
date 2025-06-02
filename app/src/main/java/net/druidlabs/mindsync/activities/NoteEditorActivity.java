@@ -1,6 +1,8 @@
 package net.druidlabs.mindsync.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,8 +11,22 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import net.druidlabs.mindsync.R;
+import net.druidlabs.mindsync.notes.Note;
+
+/**
+ * This is the activity where the note editing itself takes place.
+ *
+ * @author Andrew Jones
+ * @since 0.3.0
+ * @version 1.0
+ * */
 
 public class NoteEditorActivity extends AppCompatActivity {
+
+    private EditText noteHeadingEditText;
+    private EditText noteBodyEditText;
+
+    private Intent fromMainActivityIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,5 +38,17 @@ public class NoteEditorActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
+        noteBodyEditText = findViewById(R.id.editor_body_edittext);
+
+        fromMainActivityIntent = getIntent();
+
+        String noteHeading = fromMainActivityIntent.getStringExtra(Note.INTENT_HEADING);
+        String noteBody = fromMainActivityIntent.getStringExtra(Note.INTENT_BODY);
+
+        noteHeadingEditText.setText(noteHeading);
+        noteBodyEditText.setText(noteBody);
+
     }
 }

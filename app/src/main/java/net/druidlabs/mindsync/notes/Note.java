@@ -17,6 +17,9 @@ public final class Note {
     public static final String TEST_HEADING = "Testing header";
     public static final String TEST_BODY = "Testing body";
 
+    public static final String INTENT_HEADING = "Note heading";
+    public static final String INTENT_BODY = "Note body";
+
     /**
      * The note's heading.
      */
