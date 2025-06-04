@@ -20,6 +20,8 @@ public final class Note {
     public static final String INTENT_HEADING = "Note heading";
     public static final String INTENT_BODY = "Note body";
 
+    public static final String INTENT_NOTE_POSITION = "Clicked note position";
+
     /**
      * The note's heading.
      */

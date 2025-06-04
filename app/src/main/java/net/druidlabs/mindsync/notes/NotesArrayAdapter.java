@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
 
@@ -31,17 +31,12 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     private final List<N> notes;
     private final LayoutInflater inflater;
     private final int resource;
-    private final Context context;
-
-    private View.OnClickListener onNoteClickListener;
-    private View.OnLongClickListener onNoteHoldListener;
 
     public NotesArrayAdapter(@NonNull Context context, int resource, @NonNull List<N> notes) {
         super(context, resource, notes);
 
         this.notes = notes;
         this.resource = resource;
-        this.context = context;
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -49,6 +44,12 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     @Override
     public int getCount() {
         return super.getCount();
+    }
+
+    @Nullable
+    @Override
+    public N getItem(int position) {
+        return notes.get(position);
     }
 
     @NonNull
@@ -79,6 +80,7 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
             Intent noteEditorIntent = new Intent(getContext(), NoteEditorActivity.class);
             noteEditorIntent.putExtra(Note.INTENT_HEADING, note.getHeading());
             noteEditorIntent.putExtra(Note.INTENT_BODY, note.getBody());
+            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position);
 
             getContext().startActivity(noteEditorIntent);
         });
