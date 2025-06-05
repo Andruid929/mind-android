@@ -117,6 +117,13 @@ public class MainActivity extends AppCompatActivity {
         addNoteFab.setOnClickListener(v -> onFabExpanded());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        notesArrayAdapter.notifyDataSetChanged();
+    }
+
     /**
      * This method gets called when the add note button is clicked.
      *

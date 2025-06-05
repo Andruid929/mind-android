@@ -4,8 +4,8 @@ import java.util.Objects;
 
 /**
  * This class represents a note and contains the note's data.
- * <p>The moment an object of this clas and the parameters are valid,
- * this note is automatically added to {@code Notes.notes}.
+ * <p>The moment an object of this class and the parameters are valid,
+ * this note is automatically added to {@link Notes#notes}.
  *
  * @author Andrew Jones
  * @version 1.0
@@ -26,17 +26,19 @@ public final class Note {
      * The note's heading.
      */
 
-    private final String heading;
+    private String heading;
 
     /**
      * The note's body
      */
 
-    private final String body;
+    private String body;
 
     /**
      * Get a new note instance.
-     *
+     * <p>Passing in {@link #TEST_HEADING} for the heading and
+     * {@link #TEST_BODY} for the body will set this note as a test note and
+     * will not add automatically add it to {@link Notes#getNotes()}.
      * @param heading the heading/title of the note.
      * @param body    the body of the note.
      */
@@ -54,6 +56,32 @@ public final class Note {
         }
 
         Notes.notes.add(this);
+    }
+
+    /**
+     * Set a new heading for this note.
+     * Since note headings cannot be blank,
+     * passing a blank heading will cancel the operation.
+     *
+     * @since 0.6.0
+     * @param heading the new heading of this note.
+     * */
+
+    public void setHeading(String heading) {
+        if (heading.isBlank()) return;
+
+        this.heading = heading;
+    }
+
+    /**
+     * Set a new body to this note.
+     *
+     * @since 0.6.0
+     * @param body the new heading of this note.
+     * */
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     /**

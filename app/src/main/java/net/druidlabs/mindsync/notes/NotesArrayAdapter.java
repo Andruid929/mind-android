@@ -78,9 +78,7 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
 
         viewHolder.noteCardView.setOnClickListener(v -> {
             Intent noteEditorIntent = new Intent(getContext(), NoteEditorActivity.class);
-            noteEditorIntent.putExtra(Note.INTENT_HEADING, note.getHeading());
-            noteEditorIntent.putExtra(Note.INTENT_BODY, note.getBody());
-            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position);
+            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
 
             getContext().startActivity(noteEditorIntent);
         });
