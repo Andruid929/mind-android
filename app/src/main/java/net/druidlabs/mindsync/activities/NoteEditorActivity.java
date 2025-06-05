@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
+import net.druidlabs.mindsync.notes.Notes;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -25,8 +26,9 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     private EditText noteHeadingEditText;
     private EditText noteBodyEditText;
-
     private Intent fromMainActivityIntent;
+
+    private Note currentNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,10 @@ public class NoteEditorActivity extends AppCompatActivity {
         noteBodyEditText = findViewById(R.id.editor_body_edittext);
 
         fromMainActivityIntent = getIntent();
+
+        int currentNotePosition = fromMainActivityIntent.getIntExtra(Note.INTENT_NOTE_POSITION, -1);
+
+        currentNote = Notes.getNotes().get(currentNotePosition);
 
         String noteHeading = fromMainActivityIntent.getStringExtra(Note.INTENT_HEADING);
         String noteBody = fromMainActivityIntent.getStringExtra(Note.INTENT_BODY);
