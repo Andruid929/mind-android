@@ -2,6 +2,7 @@ package net.druidlabs.mindsync.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -24,10 +25,13 @@ import net.druidlabs.mindsync.notes.Notes;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
-    private EditText noteHeadingEditText;
-    private EditText noteBodyEditText;
-    private Intent fromMainActivityIntent;
+    private final String NOTE_SYNC_STATE = "Note synchronisation: ";
 
+    private EditText noteHeadingEditText;
+
+    private EditText noteBodyEditText;
+
+    private Intent fromMainActivityIntent;
     private Note currentNote;
 
     @Override
@@ -53,8 +57,11 @@ public class NoteEditorActivity extends AppCompatActivity {
         String noteHeading = fromMainActivityIntent.getStringExtra(Note.INTENT_HEADING);
         String noteBody = fromMainActivityIntent.getStringExtra(Note.INTENT_BODY);
 
+        boolean isNoteSynced = currentNote.getHeading().equals(noteHeading) && currentNote.getBody().equals(noteBody);
+
+        Log.d(NOTE_SYNC_STATE, isNoteSynced ? "Passed" : "Failed"); //Check to see if the intent note details passed and the note's data sync
+
         noteHeadingEditText.setText(noteHeading);
         noteBodyEditText.setText(noteBody);
-
     }
 }
