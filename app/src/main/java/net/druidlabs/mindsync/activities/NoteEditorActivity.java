@@ -1,9 +1,10 @@
 package net.druidlabs.mindsync.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,19 +20,12 @@ import net.druidlabs.mindsync.notes.Notes;
  * This is the activity where the note editing itself takes place.
  *
  * @author Andrew Jones
- * @since 0.3.0
  * @version 1.0
- * */
+ * @since 0.3.0
+ */
 
 public class NoteEditorActivity extends AppCompatActivity {
 
-    private final String NOTE_SYNC_STATE = "Note synchronisation: ";
-
-    private EditText noteHeadingEditText;
-
-    private EditText noteBodyEditText;
-
-    private Intent fromMainActivityIntent;
     private Note currentNote;
 
     @Override
@@ -45,23 +39,53 @@ public class NoteEditorActivity extends AppCompatActivity {
             return insets;
         });
 
-        noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
-        noteBodyEditText = findViewById(R.id.editor_body_edittext);
+        EditText noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
+        EditText noteBodyEditText = findViewById(R.id.editor_body_edittext);
 
-        fromMainActivityIntent = getIntent();
+        //The clicked note's index
+        int currentNoteIndex = getIntent().getIntExtra(Note.INTENT_NOTE_POSITION, -1);
 
-        int currentNotePosition = fromMainActivityIntent.getIntExtra(Note.INTENT_NOTE_POSITION, -1);
+        currentNote = Notes.getNotes().get(currentNoteIndex);
 
-        currentNote = Notes.getNotes().get(currentNotePosition);
-
-        String noteHeading = fromMainActivityIntent.getStringExtra(Note.INTENT_HEADING);
-        String noteBody = fromMainActivityIntent.getStringExtra(Note.INTENT_BODY);
-
-        boolean isNoteSynced = currentNote.getHeading().equals(noteHeading) && currentNote.getBody().equals(noteBody);
-
-        Log.d(NOTE_SYNC_STATE, isNoteSynced ? "Passed" : "Failed"); //Check to see if the intent note details passed and the note's data sync
+        String noteHeading = currentNote.getHeading();
+        String noteBody = currentNote.getBody();
 
         noteHeadingEditText.setText(noteHeading);
         noteBodyEditText.setText(noteBody);
+
+        noteHeadingEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentNote.setHeading(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().isBlank()) { //Check if a note is blank and if it is, undo the heading change
+                    Toast.makeText(NoteEditorActivity.this,
+                            "Note heading cannot be blank, heading will not be saved", Toast.LENGTH_LONG).show();
+                    currentNote.setHeading(noteHeading);
+                }
+            }
+        });
+
+        noteBodyEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentNote.setBody(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 }
