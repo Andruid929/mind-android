@@ -34,7 +34,7 @@
 
 - Android Studio (latest version recommended)
 - Android SDK 24 or higher
-- Java 8+
+- Java 11+
 
 ---
 
@@ -57,12 +57,12 @@
 
 ## Contributing
 
-I welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+The biggest reason of making this repo public was for contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 1. Fork this repo
-2. Create your feature branch (`git checkout -b feature/YourFeature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin feature/YourFeature`)
+2. Create your feature branch (`git checkout -b feat/your-feature`)
+3. Commit your changes (`git commit -am 'Some feature commit message'`)
+4. Push to the branch (`git push origin fea/your-feature`)
 5. Open a pull request
 
 ---
