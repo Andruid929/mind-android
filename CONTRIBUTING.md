@@ -36,6 +36,7 @@ Your contributions help make this note editor for Android better for everyone.
 
 ## Submitting Pull Requests
 
+- For any changes you add, add your information to CONTRIBUTORS.md on a new line following this syntax: ```[username](https:github.com/username) - What you've contributed```
 - Write clear, descriptive commit messages.
 - Follow code style conventions (Android Studio defaults/Kotlin style guide).
 - Document all your additions or modifications to help the next person visiting the code and remember, straightforward to you isn't always straightforward to someone else.
