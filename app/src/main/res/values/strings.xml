@@ -24,5 +24,10 @@
     <string name="editor_default_note_header">Note header</string>
     <string name="editor_body_hint">Start typing</string>
     <string name="editor_heading_hint">Note heading here</string>
+    <string name="editor_go_back_btn_content_desc">Go back button</string>
+    <string name="editor_note_info_separator">|</string>
+    <string name="editor_note_info_character_num">characters</string>
+    <string name="editor_note_info_character">character</string>
+    <string name="editor_note_info_creation_time">00:00</string>
 
 </resources>
