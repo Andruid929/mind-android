@@ -2,8 +2,8 @@
     <!-- App wide -->
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
-    <string name="developer_url">By <a href="https://github.com/Andruid929/">Andruid929</a>
-    </string>
+    <string name="developer_url">By <a href="https://github.com/Andruid929/">Andruid929</a></string>
+    <string name="blank_note_warning">Note heading cannot be blank</string>
 
 
     <!-- Home page (MainActivity) -->
@@ -18,11 +18,21 @@
     <!-- Custom note tiles -->
     <string name="cnt_default_header">Note header</string>
     <string name="cnt_default_body">This is a default note body</string>
+    <!-- Note add dialog -->
+    <string name="add_note_dialog_text">Add a new note</string>
+    <string name="add_note_dialog_pos_btn">Add</string>
+    <string name="add_note_dialog_neg_btn">Cancel</string>
 
 
     <!-- Note Editor Activity -->
     <string name="editor_default_note_header">Note header</string>
     <string name="editor_body_hint">Start typing</string>
     <string name="editor_heading_hint">Note heading here</string>
+    <string name="editor_go_back_btn_content_desc">Go back button</string>
+    <!-- Note info -->
+    <string name="editor_note_info_separator">|</string>
+    <string name="editor_note_info_character_num">characters</string>
+    <string name="editor_note_info_character">character</string>
+    <string name="editor_note_info_creation_time">00:00</string>
 
 </resources>

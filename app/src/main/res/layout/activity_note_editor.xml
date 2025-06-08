@@ -1,49 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".activities.NoteEditorActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.NoteEditorActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/editor_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            app:titleTextAppearance="@style/TextAppearance.AppCompat.Display1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/editor_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Display1">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editor_toolbar_back_btn"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/transparent"
+            android:contentDescription="@string/editor_go_back_btn_content_desc"
+            app:icon="@drawable/ic_go_back"
+            app:iconGravity="textStart"
+            app:iconPadding="1dp"
+            app:iconSize="30dp"
+            app:iconTint="@color/textPrimaryColour" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <EditText
-            android:id="@+id/editor_heading_edittext"
+        android:id="@+id/editor_heading_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:autofillHints=""
+        android:background="@drawable/note_editor_body_box"
+        android:hint="@string/editor_heading_hint"
+        android:inputType="text"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="@id/editor_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/editor_toolbar" />
+
+    <EditText
+        android:id="@+id/editor_body_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:autofillHints=""
+        android:background="@drawable/note_editor_body_box"
+        android:gravity="start"
+        android:hint="@string/editor_body_hint"
+        android:inputType="textMultiLine"
+        android:lineSpacingExtra="5sp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textColor="@color/textPrimaryColour"
+        app:layout_constraintStart_toStartOf="@id/editor_heading_edittext"
+        app:layout_constraintTop_toBottomOf="@id/editor_heading_edittext"
+        app:layout_constraintBottom_toTopOf="@id/editor_note_info_linear_layout"/>
+
+    <LinearLayout
+        android:id="@+id/editor_note_info_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/editor_note_time_created_textview"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:inputType="text"
-            android:autofillHints=""
-            android:hint="@string/editor_heading_hint"
-            android:background="@drawable/note_editor_body_box"
-            android:textSize="30sp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            app:layout_constraintStart_toStartOf="@id/editor_toolbar"
-            app:layout_constraintTop_toBottomOf="@id/editor_toolbar"
-            app:layout_constraintBottom_toTopOf="@id/editor_body_edittext" />
-
-    <EditText
-            android:id="@+id/editor_body_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="640dp"
-            android:gravity="start"
+            android:layout_height="match_parent"
+            android:text="@string/editor_note_info_creation_time"
             android:textColor="@color/textPrimaryColour"
-            android:autofillHints=""
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:lineSpacingExtra="5sp"
-            android:hint="@string/editor_body_hint"
-            android:inputType="textMultiLine"
-            android:background="@drawable/note_editor_body_box"
-            app:layout_constraintStart_toStartOf="@id/editor_heading_edittext"
-            app:layout_constraintTop_toBottomOf="@id/editor_heading_edittext"/>
+            android:textAlignment="viewStart"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/editor_note_info_separator"
+            android:textColor="@color/textPrimaryColour" />
+
+        <TextView
+            android:id="@+id/editor_note_character_num_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/editor_note_info_character_num"
+            android:textColor="@color/textPrimaryColour"
+            android:textAlignment="viewEnd"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
