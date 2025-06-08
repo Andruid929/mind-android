@@ -1,15 +1,19 @@
 package net.druidlabs.mindsync;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,13 +23,16 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 
+import net.druidlabs.mindsync.activities.NoteEditorActivity;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notes.Notes;
 import net.druidlabs.mindsync.notes.NotesArrayAdapter;
 import net.druidlabs.mindsync.ui.Animations;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The activity you boot into when you launch the application.
@@ -90,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
         addNoteFab = findViewById(R.id.home_add_note_fab);
         addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
 
-        Note note1 = new Note("Test Note 1", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
-        Note note2 = new Note("Test Note 2", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
-        Note note3 = new Note("Test Note 3", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
+        new Note("Test Note 1", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
+        new Note("Test Note 2", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
+        new Note("Test Note 3", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
 
         notesList = Notes.getNotes();
 
@@ -115,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(homeToolbar);
 
         addNoteFab.setOnClickListener(v -> onFabExpanded());
+
+        addTextNoteFab.setOnClickListener(v -> {
+            addNoteDialog();
+        });
     }
 
     @Override
@@ -122,6 +133,46 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         notesArrayAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Invoke a dialog where the user can input a new note's header.
+     * If the input is not blank, the note editor activity will be opened and the new note registered.
+     *
+     * @since 0.8.0
+     * */
+
+    private void addNoteDialog() {
+        LayoutInflater viewInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        View noteDialogView = viewInflater.inflate(R.layout.note_create_dialog, null, false);
+
+        TextInputEditText dialogBox = noteDialogView.findViewById(R.id.add_note_dialog_textinput_edittext);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        builder.setView(noteDialogView);
+        builder.setPositiveButton(R.string.add_note_dialog_pos_btn, (dialog, which) -> {
+            String newNoteHeading = Objects.requireNonNull(dialogBox.getText()).toString();
+
+            while (newNoteHeading.isBlank()) {
+                Toast.makeText(context, R.string.blank_note_warning, Toast.LENGTH_SHORT).show();
+            }
+
+            dialog.dismiss();
+
+            new Note(newNoteHeading, "");
+
+            notesArrayAdapter.notifyDataSetChanged();
+
+            Intent noteEditorIntent = new Intent(context, NoteEditorActivity.class);
+            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, Notes.getNotes().size() - 1);
+            startActivity(noteEditorIntent);
+        });
+        builder.setNegativeButton(R.string.add_note_dialog_neg_btn, ((dialog, which) -> dialog.dismiss()));
+        builder.create();
+
+        builder.show();
     }
 
     /**

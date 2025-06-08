@@ -93,8 +93,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().isBlank()) { //Check if a note is blank and if it is, undo the heading change
-                    Toast.makeText(NoteEditorActivity.this,
-                            "Note heading cannot be blank, heading will not be saved", Toast.LENGTH_LONG).show();
+                    Toast.makeText(NoteEditorActivity.this, R.string.blank_note_warning, Toast.LENGTH_LONG).show();
                     currentNote.setHeading(noteHeading);
                 }
             }
@@ -134,7 +133,7 @@ public class NoteEditorActivity extends AppCompatActivity {
      * @param resId the string resource ID.
      * @return the String represented by the {@code resID}.
      * @since 0.7.0
-     * */
+     */
 
     private String getStringResource(int resId) {
         return getResources().getString(resId);
