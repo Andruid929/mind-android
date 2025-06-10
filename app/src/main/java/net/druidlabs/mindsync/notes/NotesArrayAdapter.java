@@ -1,5 +1,7 @@
 package net.druidlabs.mindsync.notes;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -32,11 +34,13 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     private final LayoutInflater inflater;
     private final int resource;
 
+    private final Context context;
     public NotesArrayAdapter(@NonNull Context context, int resource, @NonNull List<N> notes) {
         super(context, resource, notes);
 
         this.notes = notes;
         this.resource = resource;
+        this.context = context;
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -78,9 +82,10 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
 
         viewHolder.noteCardView.setOnClickListener(v -> {
             Intent noteEditorIntent = new Intent(getContext(), NoteEditorActivity.class);
+            noteEditorIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
             noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
 
-            getContext().startActivity(noteEditorIntent);
+            context.startActivity(noteEditorIntent);
         });
 
         return convertView;

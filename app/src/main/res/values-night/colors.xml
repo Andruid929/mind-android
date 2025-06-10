@@ -3,5 +3,6 @@
 
     <color name="colourPrimary">#692E7E</color>
     <color name="textPrimaryColour">#DADADA</color>
+    <color name="notesTilesBg">#444444</color>
 
 </resources>

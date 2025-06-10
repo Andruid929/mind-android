@@ -15,9 +15,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 
+import net.druidlabs.mindsync.MainActivity;
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
-import net.druidlabs.mindsync.notes.Notes;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -30,8 +30,6 @@ import net.druidlabs.mindsync.notes.Notes;
 public class NoteEditorActivity extends AppCompatActivity {
 
     private Note currentNote;
-
-    private MaterialButton goBackBtn;
 
     private TextView bodyCharCountTextView;
     private TextView noteCreationTimeTextView;
@@ -50,7 +48,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         EditText noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
         EditText noteBodyEditText = findViewById(R.id.editor_body_edittext);
 
-        goBackBtn = findViewById(R.id.editor_toolbar_back_btn);
+        MaterialButton goBackBtn = findViewById(R.id.editor_toolbar_back_btn);
 
         bodyCharCountTextView = findViewById(R.id.editor_note_character_num_textview);
         noteCreationTimeTextView = findViewById(R.id.editor_note_time_created_textview);
@@ -60,7 +58,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         //The clicked note's index
         int currentNoteIndex = getIntent().getIntExtra(Note.INTENT_NOTE_POSITION, -1);
 
-        currentNote = Notes.getNotes().get(currentNoteIndex);
+        currentNote = MainActivity.notesList.get(currentNoteIndex);
 
         String noteHeading = currentNote.getHeading();
         String noteBody = currentNote.getBody();

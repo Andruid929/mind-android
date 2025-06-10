@@ -1,11 +1,13 @@
 package net.druidlabs.mindsync.notes;
 
+import net.druidlabs.mindsync.MainActivity;
+
 import java.util.Objects;
 
 /**
  * This class represents a note and contains the note's data.
  * <p>The moment an object of this class and the parameters are valid,
- * this note is automatically added to {@link Notes#notes}.
+ * this note is automatically added to {@link MainActivity#notesList}.
  *
  * @author Andrew Jones
  * @version 1.0
@@ -16,10 +18,6 @@ public final class Note {
 
     public static final String TEST_HEADING = "Testing header";
     public static final String TEST_BODY = "Testing body";
-
-    public static final String INTENT_HEADING = "Note heading";
-    public static final String INTENT_BODY = "Note body";
-
     public static final String INTENT_NOTE_POSITION = "Clicked note position";
 
     /**
@@ -38,7 +36,7 @@ public final class Note {
      * Get a new note instance.
      * <p>Passing in {@link #TEST_HEADING} for the heading and
      * {@link #TEST_BODY} for the body will set this note as a test note and
-     * will not add automatically add it to {@link Notes#getNotes()}.
+     * will not add automatically add it to {@link MainActivity#notesList}.
      * @param heading the heading/title of the note.
      * @param body    the body of the note.
      */
@@ -55,7 +53,7 @@ public final class Note {
             return;
         }
 
-        Notes.notes.add(this);
+        MainActivity.notesList.add(this);
     }
 
     /**

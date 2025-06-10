@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,13 +25,23 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
 import net.druidlabs.mindsync.notes.Note;
-import net.druidlabs.mindsync.notes.Notes;
 import net.druidlabs.mindsync.notes.NotesArrayAdapter;
 import net.druidlabs.mindsync.ui.Animations;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,20 +57,19 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout homeDrawerLayout;
-
-    private NavigationView homeNavigationView;
-
-    private MaterialToolbar homeToolbar;
-
-    private GridView notesListGridView;
+    /**
+     * Logcat tag for note saving and retrieving.
+     * */
+    private static final String NOTES_IO_TAG = "Notes I/O";
 
     private FloatingActionButton addNoteFab; //The button with the "+" icon
     private FloatingActionButton addTextNoteFab; //The button with the pencil icon
 
-    private List<Note> notesList;
+    public static List<Note> notesList;
 
     private NotesArrayAdapter<Note> notesArrayAdapter;
+
+    public static final String DATA_FILE_NAME = "MNDDTR.mnd";
 
     /**
      * The state of the add note button,
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isAddNoteFabClicked;
 
-    private Context context;
+    private Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,29 +94,25 @@ public class MainActivity extends AppCompatActivity {
 
         isAddNoteFabClicked = false;
 
-        context = getApplicationContext();
+        appContext = getApplicationContext();
 
-        homeDrawerLayout = findViewById(R.id.main);
+        DrawerLayout homeDrawerLayout = findViewById(R.id.main);
 
-        homeNavigationView = findViewById(R.id.home_drawer_nav_view);
+        NavigationView homeNavigationView = findViewById(R.id.home_drawer_nav_view);
 
-        homeToolbar = findViewById(R.id.home_toolbar);
+        MaterialToolbar homeToolbar = findViewById(R.id.home_toolbar);
 
-        notesListGridView = findViewById(R.id.home_notes_gridview);
+        GridView notesListGridView = findViewById(R.id.home_notes_gridview);
+
+        notesList = readTypeFromStorage();
 
         addNoteFab = findViewById(R.id.home_add_note_fab);
         addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
 
-        new Note("Test Note 1", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
-        new Note("Test Note 2", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
-        new Note("Test Note 3", "This is a test note added to test the UI for aesthetic cohesion if that makes sense");
-
-        notesList = Notes.getNotes();
-
         TextView devUrlText = homeNavigationView.getHeaderView(0).findViewById(R.id.menu_dev_url);
         devUrlText.setMovementMethod(LinkMovementMethod.getInstance());
 
-        notesArrayAdapter = new NotesArrayAdapter<>(MainActivity.this, R.layout.custom_notes_tiles, notesList);
+        notesArrayAdapter = new NotesArrayAdapter<>(appContext, R.layout.custom_notes_tiles, notesList);
 
         notesListGridView.setAdapter(notesArrayAdapter);
 
@@ -123,9 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
         addNoteFab.setOnClickListener(v -> onFabExpanded());
 
-        addTextNoteFab.setOnClickListener(v -> {
-            addNoteDialog();
-        });
+        addTextNoteFab.setOnClickListener(v -> addNoteDialog());
     }
 
     @Override
@@ -133,6 +137,74 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         notesArrayAdapter.notifyDataSetChanged();
+
+        saveNotesToStorage();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        saveNotesToStorage();
+    }
+
+    /**
+     * Save the given {@code data} to the the documents folder.
+     * This uses Google {@link Gson} to serialise the data to a {@code} String and writes it
+     * to the file whose name is specified by {@code fileName}.
+     *
+     * @see #readTypeFromStorage()
+     * @since 0.9.0
+     */
+    private void saveNotesToStorage() {
+        Gson gson = new Gson();
+
+        File dataFile = new File(getFilesDir().getPath() + DATA_FILE_NAME);
+
+        try {
+            if (!dataFile.exists()) {
+                Log.d(NOTES_IO_TAG, "Data non-existent: " + dataFile.createNewFile());
+            }
+        } catch (IOException e) {
+            Log.d(NOTES_IO_TAG, "Unable to create save file, aborting save!");
+            e.printStackTrace(System.err);
+        }
+
+        try (FileWriter fileWriter = new FileWriter(dataFile);
+             BufferedWriter writer = new BufferedWriter(fileWriter)) {
+
+            gson.toJson(notesList, new TypeToken<List<Note>>() {}.getType(), writer);
+            Log.d(NOTES_IO_TAG, "Save successful");
+        } catch (JsonIOException | IOException e) {
+            Log.d(NOTES_IO_TAG, "Unable to write to save file, aborting save!");
+            e.printStackTrace(System.err);
+        }
+    }
+
+    /**
+     * Retrieve saved data from the storage under the {@code fileName} specified.
+     *
+     * @see #saveNotesToStorage()
+     * @since 0.9.0
+     */
+
+    private List<Note> readTypeFromStorage() {
+        Gson gson = new Gson();
+
+        File dataFile = new File(appContext.getFilesDir().getPath() + DATA_FILE_NAME);
+
+        if (!dataFile.exists()) {
+            return new LinkedList<>();
+        }
+
+        try (FileReader fileReader = new FileReader(dataFile);
+             BufferedReader reader = new BufferedReader(fileReader)) {
+
+            return gson.fromJson(reader, new TypeToken<List<Note>>() {}.getType());
+
+        } catch (IOException | JsonSyntaxException e) {
+            return new LinkedList<>();
+        }
     }
 
     /**
@@ -140,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
      * If the input is not blank, the note editor activity will be opened and the new note registered.
      *
      * @since 0.8.0
-     * */
+     */
 
     private void addNoteDialog() {
         LayoutInflater viewInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -149,14 +221,16 @@ public class MainActivity extends AppCompatActivity {
 
         TextInputEditText dialogBox = noteDialogView.findViewById(R.id.add_note_dialog_textinput_edittext);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setView(noteDialogView);
         builder.setPositiveButton(R.string.add_note_dialog_pos_btn, (dialog, which) -> {
             String newNoteHeading = Objects.requireNonNull(dialogBox.getText()).toString();
 
-            while (newNoteHeading.isBlank()) {
-                Toast.makeText(context, R.string.blank_note_warning, Toast.LENGTH_SHORT).show();
+            if (newNoteHeading.isBlank()) {
+                dialog.dismiss();
+                Toast.makeText(appContext, R.string.blank_note_warning, Toast.LENGTH_SHORT).show();
+                return;
             }
 
             dialog.dismiss();
@@ -165,8 +239,8 @@ public class MainActivity extends AppCompatActivity {
 
             notesArrayAdapter.notifyDataSetChanged();
 
-            Intent noteEditorIntent = new Intent(context, NoteEditorActivity.class);
-            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, Notes.getNotes().size() - 1);
+            Intent noteEditorIntent = new Intent(appContext, NoteEditorActivity.class);
+            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, notesList.size() - 1);
             startActivity(noteEditorIntent);
         });
         builder.setNegativeButton(R.string.add_note_dialog_neg_btn, ((dialog, which) -> dialog.dismiss()));
@@ -214,11 +288,11 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void startAnimation(boolean clicked) {
-        Animation fromBottom = Animations.FROM_BOTTOM.getAnimation(context);
-        Animation toBottom = Animations.TO_BOTTOM.getAnimation(context);
+        Animation fromBottom = Animations.FROM_BOTTOM.getAnimation(appContext);
+        Animation toBottom = Animations.TO_BOTTOM.getAnimation(appContext);
 
-        Animation rotateOpen = Animations.ROTATE_90_CLOCKWISE.getAnimation(context);
-        Animation rotateClose = Animations.ROTATE_90_ANTI_CLOCKWISE.getAnimation(context);
+        Animation rotateOpen = Animations.ROTATE_90_CLOCKWISE.getAnimation(appContext);
+        Animation rotateClose = Animations.ROTATE_90_ANTI_CLOCKWISE.getAnimation(appContext);
 
         if (!clicked) {
             addTextNoteFab.startAnimation(fromBottom);
