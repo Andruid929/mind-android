@@ -7,12 +7,14 @@
         android:layout_margin="20dp"
         android:elevation="10dp"
         android:padding="10dp"
+        android:backgroundTint="@color/notesTilesBg"
         app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp">
+            android:padding="10dp"
+            >
 
         <TextView
                 android:id="@+id/note_heading_textview"
