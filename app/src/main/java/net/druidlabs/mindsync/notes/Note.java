@@ -1,13 +1,16 @@
 package net.druidlabs.mindsync.notes;
 
+import androidx.annotation.NonNull;
+
 import net.druidlabs.mindsync.MainActivity;
+import net.druidlabs.mindsync.util.TimeStamp;
 
 import java.util.Objects;
 
 /**
  * This class represents a note and contains the note's data.
- * <p>The moment an object of this class and the parameters are valid,
- * this note is automatically added to {@link MainActivity#notesList}.
+ * <p>The moment the parameters are valid, any new object of this class
+ * is automatically added to {@link MainActivity#notesList}.
  *
  * @author Andrew Jones
  * @version 1.0
@@ -32,6 +35,8 @@ public final class Note {
 
     private String body;
 
+    private final String timeStamp;
+
     /**
      * Get a new note instance.
      * <p>Passing in {@link #TEST_HEADING} for the heading and
@@ -44,6 +49,8 @@ public final class Note {
     public Note(String heading, String body) {
         this.heading = heading;
         this.body = body;
+
+        timeStamp = TimeStamp.getTimeStamp();
 
         if (heading.isBlank()) {
             return;
@@ -102,15 +109,31 @@ public final class Note {
         return body;
     }
 
+    /**
+     * This note's timestamp.
+     *
+     * @return the date and time this note was created.
+     * @since 0.10.0
+     * */
+    @NonNull
+    public String getTimeStamp() {
+        if (timeStamp == null) {
+            return TimeStamp.DEFAULT_TIMESTAMP;
+        }
+
+        return timeStamp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
-        return Objects.equals(heading, note.heading) && Objects.equals(body, note.body);
+        return Objects.equals(heading, note.heading) && Objects.equals(body, note.body)
+                && Objects.equals(timeStamp, note.timeStamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(heading, body);
+        return Objects.hash(heading, body, timeStamp);
     }
 }

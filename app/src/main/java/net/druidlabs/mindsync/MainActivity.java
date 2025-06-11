@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Logcat tag for note saving and retrieving.
-     * */
+     */
     private static final String NOTES_IO_TAG = "Notes I/O";
 
     private FloatingActionButton addNoteFab; //The button with the "+" icon
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String DATA_FILE_NAME = "MNDDTR.mnd";
 
     /**
-     * The state of the add note button,
+     * The state of the add_note button,
      * this lets the cycle know when to start the expand animation.
      * <p>False by default
      */
@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
 
         GridView notesListGridView = findViewById(R.id.home_notes_gridview);
 
+        setSupportActionBar(homeToolbar);
+
         notesList = readTypeFromStorage();
 
         addNoteFab = findViewById(R.id.home_add_note_fab);
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         TextView devUrlText = homeNavigationView.getHeaderView(0).findViewById(R.id.menu_dev_url);
         devUrlText.setMovementMethod(LinkMovementMethod.getInstance());
 
-        notesArrayAdapter = new NotesArrayAdapter<>(appContext, R.layout.custom_notes_tiles, notesList);
+        notesArrayAdapter = new NotesArrayAdapter<>(MainActivity.this, R.layout.custom_notes_tiles, notesList);
 
         notesListGridView.setAdapter(notesArrayAdapter);
 
@@ -120,12 +122,10 @@ public class MainActivity extends AppCompatActivity {
 
         homeNavigationView.bringToFront();
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout,
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout, homeToolbar,
                 R.string.home_drawer_open_desc, R.string.home_drawer_close_desc);
         homeDrawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
-
-        setSupportActionBar(homeToolbar);
 
         addNoteFab.setOnClickListener(v -> onFabExpanded());
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Save the given {@code data} to the the documents folder.
+     * Save the given {@code data} to the documents folder.
      * This uses Google {@link Gson} to serialise the data to a {@code} String and writes it
      * to the file whose name is specified by {@code fileName}.
      *
@@ -173,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
         try (FileWriter fileWriter = new FileWriter(dataFile);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
 
-            gson.toJson(notesList, new TypeToken<List<Note>>() {}.getType(), writer);
+            gson.toJson(notesList, new TypeToken<List<Note>>() {
+            }.getType(), writer);
             Log.d(NOTES_IO_TAG, "Save successful");
         } catch (JsonIOException | IOException e) {
             Log.d(NOTES_IO_TAG, "Unable to write to save file, aborting save!");
@@ -264,9 +265,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Set the visibility of the hidden add text note button and also make it clickable.
+     * Set the visibility of the hidden add_text note button and also make it clickable.
      *
-     * @param clicked the state of button, whether it has been clicked or not.
+     * @param clicked the state of the button, whether it has been clicked or not.
      * @since 0.5.0
      */
 
@@ -281,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Start animating the add text note button.
+     * Start animating the add_text note button.
      *
      * @param clicked the state of the button, whether it has been clicked or not.
      * @since 0.5.0
