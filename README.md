@@ -76,7 +76,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 ## Acknowledgements
 
 - [Android documentation](https://developer.android.com/docs)
-- Special thanks to all contributors!
+- Special thanks to all [contributors](CONTRIBUTORS.md)!
 
 ---
 
