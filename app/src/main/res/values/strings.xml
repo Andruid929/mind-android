@@ -2,7 +2,7 @@
     <!-- App wide -->
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
-    <string name="developer_url">By <a href="https://github.com/Andruid929/">Andruid929</a></string>
+    <string name="developer_url">See <a href="https://github.com/Andruid929/mind-android/blob/master/CONTRIBUTORS.md">contributors</a></string>
     <string name="blank_note_warning">Note heading cannot be blank</string>
 
 
