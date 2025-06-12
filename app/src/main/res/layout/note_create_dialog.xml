@@ -7,9 +7,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:paddingVertical="20dp"
-        app:boxStrokeColor="@color/textPrimaryColour"
-        app:hintTextColor="@color/textPrimaryColour">
+        android:paddingVertical="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_note_dialog_textinput_edittext"

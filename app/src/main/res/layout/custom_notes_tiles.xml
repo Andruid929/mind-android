@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/note_cardview"
-        android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:layout_margin="20dp"
-        android:elevation="10dp"
-        android:padding="10dp"
-        android:backgroundTint="@color/notesTilesBg"
-        app:cardCornerRadius="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/note_cardview"
+    android:layout_width="match_parent"
+    android:layout_height="170dp"
+    android:layout_margin="20dp"
+    android:backgroundTint="@color/notesTilesBg"
+    android:elevation="10dp"
+    android:padding="10dp"
+    app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/note_heading_textview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp"
-            >
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/cnt_default_header"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="@color/textPrimaryColour"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-                android:id="@+id/note_heading_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:text="@string/cnt_default_header"
-                android:textColor="@color/textPrimaryColour"
-                android:textStyle="bold"
-                android:textSize="25sp"
-                android:layout_margin="5dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-        <TextView
-                android:id="@+id/note_body_textview"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:layout_constraintTop_toBottomOf="@id/note_heading_textview"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_margin="5dp"
-                android:textColor="@color/textPrimaryColour"
-                android:text="@string/cnt_default_body"
-                android:textSize="15sp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:id="@+id/note_body_textview"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="5dp"
+            android:text="@string/cnt_default_body"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/textPrimaryColour"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/note_heading_textview" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

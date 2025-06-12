@@ -42,6 +42,7 @@ public final class Note {
      * <p>Passing in {@link #TEST_HEADING} for the heading and
      * {@link #TEST_BODY} for the body will set this note as a test note and
      * will not add automatically add it to {@link MainActivity#notesList}.
+     *
      * @param heading the heading/title of the note.
      * @param body    the body of the note.
      */
@@ -68,9 +69,9 @@ public final class Note {
      * Since note headings cannot be blank,
      * passing a blank heading will cancel the operation.
      *
-     * @since 0.6.0
      * @param heading the new heading of this note.
-     * */
+     * @since 0.6.0
+     */
 
     public void setHeading(String heading) {
         if (heading.isBlank()) return;
@@ -81,9 +82,9 @@ public final class Note {
     /**
      * Set a new body to this note.
      *
-     * @since 0.6.0
      * @param body the new heading of this note.
-     * */
+     * @since 0.6.0
+     */
 
     public void setBody(String body) {
         this.body = body;
@@ -114,7 +115,7 @@ public final class Note {
      *
      * @return the date and time this note was created.
      * @since 0.10.0
-     * */
+     */
     @NonNull
     public String getTimeStamp() {
         if (timeStamp == null) {
