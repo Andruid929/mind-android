@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextInputEditText dialogBox = noteDialogView.findViewById(R.id.add_note_dialog_textinput_edittext);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.NoteDialogTheme);
 
         builder.setView(noteDialogView);
         builder.setPositiveButton(R.string.add_note_dialog_pos_btn, (dialog, which) -> {
