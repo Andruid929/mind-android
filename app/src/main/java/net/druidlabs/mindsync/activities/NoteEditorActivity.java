@@ -32,7 +32,6 @@ public class NoteEditorActivity extends AppCompatActivity {
     private Note currentNote;
 
     private TextView bodyCharCountTextView;
-    private TextView noteCreationTimeTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         MaterialButton goBackBtn = findViewById(R.id.editor_toolbar_back_btn);
 
         bodyCharCountTextView = findViewById(R.id.editor_note_character_num_textview);
-        noteCreationTimeTextView = findViewById(R.id.editor_note_time_created_textview);
+
+        TextView noteCreationTimeTextView = findViewById(R.id.editor_note_time_created_textview);
 
         goBackBtn.setOnClickListener(v -> finish());
 
@@ -62,6 +62,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         String noteHeading = currentNote.getHeading();
         String noteBody = currentNote.getBody();
+
+        String noteTimeStamp = currentNote.getTimeStamp();
 
         int numOfCharsInBody = noteBody.length();
 
@@ -74,6 +76,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         }
 
         bodyCharCountTextView.setText(charText);
+        noteCreationTimeTextView.setText(noteTimeStamp);
 
         noteHeadingEditText.setText(noteHeading);
         noteBodyEditText.setText(noteBody);

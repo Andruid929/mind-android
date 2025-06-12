@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 
 import net.druidlabs.mindsync.R;
@@ -23,10 +24,10 @@ import java.util.List;
  * This class is what allows the user to interact with the {@code List<Note>}.
  *
  * @author Andrew Jones
+ * @version 1.0
  * @see android.widget.ArrayAdapter ArrayAdapter
  * @since 0.2.0
- * @version 1.0
- * */
+ */
 
 public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
 
@@ -35,6 +36,7 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     private final int resource;
 
     private final Context context;
+
     public NotesArrayAdapter(@NonNull Context context, int resource, @NonNull List<N> notes) {
         super(context, resource, notes);
 
@@ -88,7 +90,55 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
             context.startActivity(noteEditorIntent);
         });
 
+        viewHolder.noteCardView.setOnLongClickListener(v -> {
+            View dialogView = inflater.inflate(R.layout.note_options_dialog, null, false);
+
+            AlertDialog noteOptionsDialog = createOptionsDialog(position, dialogView).create();
+
+            TextView dialogNoteHeader = dialogView.findViewById(R.id.note_options_preview_header);
+            TextView dialogNoteBody = dialogView.findViewById(R.id.note_options_preview_body);
+
+            dialogNoteHeader.setText(note.getHeading());
+            dialogNoteBody.setText(note.getBody());
+
+            noteOptionsDialog.show();
+
+            return true;
+        });
+
         return convertView;
+    }
+
+    /**
+     * Create a new note options dialog when a note is held.
+     *
+     * @param position the position/index of the note held.
+     * @param dialogView the inflated dialog layout resource
+     * @return a new dialog builder with two buttons.
+     * @since 0.10.0
+     * */
+
+    private @NonNull AlertDialog.Builder createOptionsDialog(int position, View dialogView) {
+        return new AlertDialog.Builder(context)
+
+                .setView(dialogView)
+                //Open the note editor to edit the note
+                .setPositiveButton(R.string.note_options_btn_pos, (dialog, which) -> {
+                    Intent noteEditorIntent = new Intent(getContext(), NoteEditorActivity.class);
+                    noteEditorIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                    noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
+
+                    context.startActivity(noteEditorIntent);
+                })
+                //Delete the note
+                .setNegativeButton(R.string.note_options_btn_neg, ((dialog, which) -> {
+                    dialog.dismiss();
+
+                    notes.remove(position);
+
+                    notifyDataSetChanged();
+                }));
+
     }
 
     /**
@@ -96,9 +146,9 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
      * view holder pattern to increase scrolling performance in the view.
      *
      * @author Andrew Jones
-     * @since 0.2.0
      * @version 1.0
-     * */
+     * @since 0.2.0
+     */
 
     private static class ViewHolder {
         private CardView noteCardView;

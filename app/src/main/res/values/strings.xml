@@ -2,7 +2,7 @@
     <!-- App wide -->
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
-    <string name="developer_url">See <a href="https://github.com/Andruid929/mind-android/blob/master/CONTRIBUTORS.md">contributors</a></string>
+    <string name="developer_url">See <a href="https://github.com/Andruid929/mind-android/">contributors</a></string>
     <string name="blank_note_warning">Note heading cannot be blank</string>
 
 
@@ -22,6 +22,12 @@
     <string name="add_note_dialog_text">Add a new note</string>
     <string name="add_note_dialog_pos_btn">Add</string>
     <string name="add_note_dialog_neg_btn">Cancel</string>
+    <!-- Note options dialog -->
+    <string name="note_options_header">Note header</string>
+    <string name="note_options_body">Note body</string>
+    <string name="note_options_btn_pos">Edit</string>
+    <string name="note_options_btn_neg">Delete</string>
+    <string name="note_options_btn_neu">Cancel</string>
 
 
     <!-- Note Editor Activity -->
