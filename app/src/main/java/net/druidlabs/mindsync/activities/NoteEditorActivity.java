@@ -31,6 +31,10 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     private Note currentNote;
 
+    /**
+     * The {@code View} that displays the number of characters the note has.
+     * */
+
     private TextView bodyCharCountTextView;
 
     @Override

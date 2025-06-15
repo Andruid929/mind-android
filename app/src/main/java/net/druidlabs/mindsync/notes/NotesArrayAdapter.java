@@ -119,7 +119,7 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
      * */
 
     private @NonNull AlertDialog.Builder createOptionsDialog(int position, View dialogView) {
-        return new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(context, R.style.NoteDialogTheme)
 
                 .setView(dialogView)
                 //Open the note editor to edit the note

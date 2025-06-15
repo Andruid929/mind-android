@@ -6,13 +6,19 @@
         <item
             android:id="@+id/settings_menu_item"
             android:icon="@drawable/menu_settings"
-            android:title="@string/home_menu_settings" />
+            android:title="@string/home_menu_settings"
+            android:visible="false" />
 
         <item
-                android:id="@+id/app_info_menu_item"
-                android:icon="@drawable/menu_app_info"
-                android:title="@string/home_menu_app_info"
-                />
+            android:id="@+id/app_info_menu_item"
+            android:icon="@drawable/menu_app_info"
+            android:title="@string/home_menu_app_info"
+            android:visible="false" />
+
+        <item
+            android:id="@+id/view_src_code_menu_item"
+            android:icon="@drawable/ic_menu_view_src_code"
+            android:title="@string/home_menu_view_src_code" />
 
     </group>
 

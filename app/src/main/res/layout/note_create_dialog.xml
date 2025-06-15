@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="85dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -15,8 +15,7 @@
             android:id="@+id/add_note_dialog_textinput_edittext"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="6dp"
+            android:layout_marginHorizontal="15dp"
             android:hint="@string/add_note_dialog_text"
             android:maxLines="1"
             android:textColor="@color/textPrimaryColour" />

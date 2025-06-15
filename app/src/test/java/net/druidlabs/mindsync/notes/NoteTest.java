@@ -7,9 +7,9 @@ import org.junit.Test;
 /**
  * Test for the {@link Note} class
  *
- * @since 0.6.0
  * @author Andrew Jones
- * */
+ * @since 0.6.0
+ */
 
 public class NoteTest {
 

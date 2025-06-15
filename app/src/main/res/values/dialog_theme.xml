@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NoteDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <!-- Customise light mode dialog theme here -->
+        <item name="dialogCornerRadius">15dp</item>
+        <item name="colorPrimary">@color/textPrimaryColour</item>
+    </style>
+
+</resources>

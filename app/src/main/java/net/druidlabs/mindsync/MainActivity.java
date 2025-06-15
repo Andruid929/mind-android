@@ -2,14 +2,15 @@ package net.druidlabs.mindsync;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -62,12 +63,33 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final String NOTES_IO_TAG = "Notes I/O";
 
-    private FloatingActionButton addNoteFab; //The button with the "+" icon
-    private FloatingActionButton addTextNoteFab; //The button with the pencil icon
+    /**
+     * The button with the "+" icon.
+     */
+
+    private FloatingActionButton addNoteFab;
+
+    /**
+     * The button with the pencil icon.
+     */
+
+    private FloatingActionButton addTextNoteFab;
+
+    /**
+     * The primary notes list.
+     */
 
     public static List<Note> notesList;
 
+    /**
+     * Primary {@code ArrayAdapter} for the {@link #notesList}.
+     */
+
     private NotesArrayAdapter<Note> notesArrayAdapter;
+
+    /**
+     * File name of the file where the app saves the notes list.
+     */
 
     public static final String DATA_FILE_NAME = "MNDDTR.mnd";
 
@@ -111,9 +133,6 @@ public class MainActivity extends AppCompatActivity {
         addNoteFab = findViewById(R.id.home_add_note_fab);
         addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
 
-        TextView devUrlText = homeNavigationView.getHeaderView(0).findViewById(R.id.menu_dev_url);
-        devUrlText.setMovementMethod(LinkMovementMethod.getInstance());
-
         notesArrayAdapter = new NotesArrayAdapter<>(MainActivity.this, R.layout.custom_notes_tiles, notesList);
 
         notesListGridView.setAdapter(notesArrayAdapter);
@@ -121,6 +140,16 @@ public class MainActivity extends AppCompatActivity {
         notesArrayAdapter.notifyDataSetChanged();
 
         homeNavigationView.bringToFront();
+
+        Menu homeDrawerMenu = homeNavigationView.getMenu();
+
+        MenuItem viewSrcCodeItem = homeDrawerMenu.findItem(R.id.view_src_code_menu_item);
+        //Open this app's official GitHub repository
+        viewSrcCodeItem.setOnMenuItemClickListener(item -> {
+            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android/"));
+            startActivity(openGitHubIntent);
+            return true;
+        });
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout, homeToolbar,
                 R.string.home_drawer_open_desc, R.string.home_drawer_close_desc);
@@ -159,7 +188,9 @@ public class MainActivity extends AppCompatActivity {
     private void saveNotesToStorage() {
         Gson gson = new Gson();
 
-        File dataFile = new File(getFilesDir().getPath() + DATA_FILE_NAME);
+        File dataFile = new File(getFilesDir().getPath() + '/' + DATA_FILE_NAME);
+
+        Log.d("Storage path", dataFile.getAbsolutePath());
 
         try {
             if (!dataFile.exists()) {
@@ -192,16 +223,17 @@ public class MainActivity extends AppCompatActivity {
     private List<Note> readTypeFromStorage() {
         Gson gson = new Gson();
 
-        File dataFile = new File(appContext.getFilesDir().getPath() + DATA_FILE_NAME);
+        File dataFile = new File(appContext.getFilesDir().getPath() + '/' + DATA_FILE_NAME);
 
         if (!dataFile.exists()) {
             return new LinkedList<>();
         }
 
-        try (FileReader fileReader = new FileReader(dataFile);
-             BufferedReader reader = new BufferedReader(fileReader)) {
+        try (FileReader fileReader = new FileReader(dataFile)) {
+            BufferedReader reader = new BufferedReader(fileReader);
 
-            return gson.fromJson(reader, new TypeToken<List<Note>>() {}.getType());
+            return gson.fromJson(reader, new TypeToken<List<Note>>() {
+            }.getType());
 
         } catch (IOException | JsonSyntaxException e) {
             return new LinkedList<>();
@@ -222,10 +254,10 @@ public class MainActivity extends AppCompatActivity {
 
         TextInputEditText dialogBox = noteDialogView.findViewById(R.id.add_note_dialog_textinput_edittext);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder addNoteDialogBuilder = new AlertDialog.Builder(this, R.style.NoteDialogTheme);
 
-        builder.setView(noteDialogView);
-        builder.setPositiveButton(R.string.add_note_dialog_pos_btn, (dialog, which) -> {
+        addNoteDialogBuilder.setView(noteDialogView);
+        addNoteDialogBuilder.setPositiveButton(R.string.add_note_dialog_pos_btn, (dialog, which) -> {
             String newNoteHeading = Objects.requireNonNull(dialogBox.getText()).toString();
 
             if (newNoteHeading.isBlank()) {
@@ -244,10 +276,10 @@ public class MainActivity extends AppCompatActivity {
             noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, notesList.size() - 1);
             startActivity(noteEditorIntent);
         });
-        builder.setNegativeButton(R.string.add_note_dialog_neg_btn, ((dialog, which) -> dialog.dismiss()));
-        builder.create();
+        addNoteDialogBuilder.setNegativeButton(R.string.add_note_dialog_neg_btn, ((dialog, which) -> dialog.dismiss()));
+        addNoteDialogBuilder.create();
 
-        builder.show();
+        addNoteDialogBuilder.show();
     }
 
     /**

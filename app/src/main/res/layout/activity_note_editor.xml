@@ -57,9 +57,9 @@
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:textColor="@color/textPrimaryColour"
+        app:layout_constraintBottom_toTopOf="@id/editor_note_info_linear_layout"
         app:layout_constraintStart_toStartOf="@id/editor_heading_edittext"
-        app:layout_constraintTop_toBottomOf="@id/editor_heading_edittext"
-        app:layout_constraintBottom_toTopOf="@id/editor_note_info_linear_layout"/>
+        app:layout_constraintTop_toBottomOf="@id/editor_heading_edittext" />
 
     <LinearLayout
         android:id="@+id/editor_note_info_linear_layout"
@@ -67,8 +67,8 @@
         android:layout_height="25dp"
         android:orientation="horizontal"
         android:paddingStart="15dp"
-        android:paddingEnd="15dp"
         android:paddingTop="5dp"
+        android:paddingEnd="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -77,8 +77,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/editor_note_info_creation_time"
-            android:textColor="@color/textPrimaryColour"
-            android:textAlignment="viewStart"/>
+            android:textAlignment="viewStart"
+            android:textColor="@color/textPrimaryColour" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -93,8 +93,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/editor_note_info_character_num"
-            android:textColor="@color/textPrimaryColour"
-            android:textAlignment="viewEnd"/>
+            android:textAlignment="viewEnd"
+            android:textColor="@color/textPrimaryColour" />
 
     </LinearLayout>
 

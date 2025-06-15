@@ -13,9 +13,9 @@ import java.util.Locale;
  * Class for generating a timestamp which includes the date and time.
  *
  * @author Andrew Jones
- * @since 0.10.0
  * @version 1.0
- * */
+ * @since 0.10.0
+ */
 
 public final class TimeStamp {
 
@@ -23,7 +23,7 @@ public final class TimeStamp {
 
     /**
      * The first ever commit of this Android app project was pushed at this time.
-     * */
+     */
 
     public static final String DEFAULT_TIMESTAMP = "May 31, 2025 | 00:31";
 
@@ -39,7 +39,7 @@ public final class TimeStamp {
      * An example is of timestamp returned in this format is {@code Jun 11 2025, 18:32}.
      *
      * @return the date and time this method was called.
-     * */
+     */
 
     public static String getTimeStamp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
