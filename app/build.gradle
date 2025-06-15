@@ -6,6 +6,12 @@ android {
     namespace 'net.druidlabs.mindsync'
     compileSdk 35
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
+            outputFileName = "Mind Editor-${variant.versionName}.apk"
+        }
+    }
+
     defaultConfig {
         applicationId "net.druidlabs.mindsync"
         minSdk 24

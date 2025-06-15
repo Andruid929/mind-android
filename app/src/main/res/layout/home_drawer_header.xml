@@ -22,13 +22,4 @@
         android:textColor="@color/textPrimaryColour"
         android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/menu_dev_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/developer_url"
-        android:textColor="@color/textPrimaryColour"
-        android:textColorLink="@color/textPrimaryColour"
-        android:textSize="20sp" />
-
 </LinearLayout>
