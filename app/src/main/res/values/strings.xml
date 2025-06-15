@@ -11,8 +11,6 @@
 
     <string name="home_drawer_open_desc">Open drawer</string>
     <string name="home_drawer_close_desc">Close drawer</string>
-    <string name="home_drawer_app_info_desc">Open app info</string>
-    <string name="home_drawer_settings_desc">Open Settings</string>
 
     <!-- Home drawer menu -->
     <string name="home_menu_settings">Settings</string>
