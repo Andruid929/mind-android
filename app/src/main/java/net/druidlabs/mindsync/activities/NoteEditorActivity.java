@@ -18,6 +18,7 @@ import com.google.android.material.button.MaterialButton;
 import net.druidlabs.mindsync.MainActivity;
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
+import net.druidlabs.mindsync.notesio.NotesIO;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -37,6 +38,16 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     private TextView bodyCharCountTextView;
 
+    private EditText noteHeadingEditText;
+    private EditText noteBodyEditText;
+
+    /**
+     * Check if this activity was created for adding a new note
+     * or for editing an existing one.
+     * */
+
+    private boolean isForNoteAdding = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +59,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             return insets;
         });
 
-        EditText noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
-        EditText noteBodyEditText = findViewById(R.id.editor_body_edittext);
+        noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
+        noteBodyEditText = findViewById(R.id.editor_body_edittext);
 
         MaterialButton goBackBtn = findViewById(R.id.editor_toolbar_back_btn);
 
@@ -62,10 +73,27 @@ public class NoteEditorActivity extends AppCompatActivity {
         //The clicked note's index
         int currentNoteIndex = getIntent().getIntExtra(Note.INTENT_NOTE_POSITION, -1);
 
-        currentNote = MainActivity.notesList.get(currentNoteIndex);
+        isForNoteAdding = (currentNoteIndex == -1);
 
-        String noteHeading = currentNote.getHeading();
-        String noteBody = currentNote.getBody();
+        String noteHeading;
+        String noteBody;
+
+        if (isForNoteAdding) {
+            //currentNoteIndex is -1, user is creating a new note
+            currentNote = new Note(Note.TEST_HEADING, Note.TEST_BODY);
+
+            noteHeading = currentNote.getTimeStamp();
+            noteBody = "";
+
+            currentNote.setHeading(noteHeading);
+            currentNote.setBody("");
+        } else {
+            //currentNoteIndex is greater than -1, user is editing an existing note
+            currentNote = MainActivity.notesList.get(currentNoteIndex);
+
+            noteHeading = currentNote.getHeading();
+            noteBody = currentNote.getBody();
+        }
 
         String noteTimeStamp = currentNote.getTimeStamp();
 
@@ -130,6 +158,33 @@ public class NoteEditorActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+
+        if (!isForNoteAdding) {
+            //Not a new note that needs to be checked for validity
+            return;
+        }
+
+        String timestamp = currentNote.getTimeStamp();
+
+        String presetHeading = noteHeadingEditText.getText().toString();
+        String presetBody = noteBodyEditText.getText().toString();
+
+        if (presetHeading.equals(timestamp) && !presetBody.isBlank()) {
+            //The body has been modified, save as new note
+            MainActivity.notesList.add(currentNote);
+
+            NotesIO.saveNotesToStorage(getApplicationContext());
+        } else if (!presetHeading.isBlank() && !presetHeading.equals(timestamp)) {
+            //The heading has been modified and is not blank, save as new note
+            MainActivity.notesList.add(currentNote);
+
+            NotesIO.saveNotesToStorage(getApplicationContext());
+        }
     }
 
     /**

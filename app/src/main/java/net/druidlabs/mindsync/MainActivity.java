@@ -136,7 +136,10 @@ public class MainActivity extends AppCompatActivity {
 
         addNoteFab.setOnClickListener(v -> onFabExpanded());
 
-        addTextNoteFab.setOnClickListener(v -> addNoteDialog());
+        addTextNoteFab.setOnClickListener(v -> {
+            Intent addNoteInEditorIntent = new Intent(MainActivity.this, NoteEditorActivity.class);
+            startActivity(addNoteInEditorIntent);
+        });
     }
 
     @Override

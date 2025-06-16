@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Class to handle the saving and retrieving of the {@link MainActivity#notesList primary notes list}.
- * <p>This class uses {@link Gson} to {@link #saveNotesToStorage(Context) serialise}
+ * <p>This class uses {@link Gson Google Gson} to {@link #saveNotesToStorage(Context) serialise}
  * and {@link #readTypeFromStorage(Context) deserialise} the {@code List<Note>} that is the notes list.
  * <p>This class was created to allow saving and retrieving of notes outside the {@code MainActivity}.
  *
