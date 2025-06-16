@@ -21,7 +21,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class to handle the saving and retrieving of notes.
+ * Class to handle the saving and retrieving of the {@link MainActivity#notesList primary notes list}.
+ * <p>This class uses {@link Gson} to {@link #saveNotesToStorage(Context) serialise}
+ * and {@link #readTypeFromStorage(Context) deserialise} the {@code List<Note>} that is the notes list.
+ * <p>This class was created to allow saving and retrieving of notes outside the {@code MainActivity}.
+ *
+ * @author Andrew Jones
+ * @version 1.0
+ * @since 1.1.0-alpha.1
  */
 
 public final class NotesIO {
@@ -41,10 +48,10 @@ public final class NotesIO {
     }
 
     /**
-     * Save the given {@code data} to the documents folder.
-     * This uses Google {@link Gson} to serialise the data to a {@code} String and writes it
-     * to the file whose name is specified by {@code fileName}.
+     * Serialise the {@link MainActivity#notesList notes list} to a gsonString
+     * and write it to the app's {@link Context#getFilesDir() data folder}.
      *
+     * @param appContext the application context.
      * @see #readTypeFromStorage(Context)
      * @since 0.9.0
      */
@@ -52,8 +59,6 @@ public final class NotesIO {
         Gson gson = new Gson();
 
         File dataFile = new File(appContext.getFilesDir().getPath() + '/' + DATA_FILE_NAME);
-
-        Log.d("Storage path", dataFile.getAbsolutePath());
 
         try {
             if (!dataFile.exists()) {
@@ -77,8 +82,12 @@ public final class NotesIO {
     }
 
     /**
-     * Retrieve saved data from the storage under the {@code fileName} specified.
+     * Read the saved data String (if any) and deserialise to get saved notes.
      *
+     * @param appContext the application context
+     * @return a list of saved notes if any are present in the data folder
+     * or a new empty {@link LinkedList notes list} if any error occurs while reading
+     * or the data file cannot be found.
      * @see #saveNotesToStorage(Context)
      * @since 0.9.0
      */
