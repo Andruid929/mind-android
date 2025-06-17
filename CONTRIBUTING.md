@@ -46,9 +46,9 @@ Your contributions help make this note editor for Android better for everyone.
 
 ## Code Style
 
-- Use Java style conventions (or Kotlin, as applicable).
+- Use Java style conventions.
 - Use Android Studio’s code formatting tools.
-- Run linter/formatter if available.
+- Run formatter if available.
 
 ## Tests
 
