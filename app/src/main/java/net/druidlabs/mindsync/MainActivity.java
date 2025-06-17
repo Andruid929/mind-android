@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,23 +25,13 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notes.NotesArrayAdapter;
+import net.druidlabs.mindsync.notesio.NotesIO;
 import net.druidlabs.mindsync.ui.Animations;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,11 +46,6 @@ import java.util.Objects;
  */
 
 public class MainActivity extends AppCompatActivity {
-
-    /**
-     * Logcat tag for note saving and retrieving.
-     */
-    private static final String NOTES_IO_TAG = "Notes I/O";
 
     /**
      * The button with the "+" icon.
@@ -86,12 +70,6 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private NotesArrayAdapter<Note> notesArrayAdapter;
-
-    /**
-     * File name of the file where the app saves the notes list.
-     */
-
-    public static final String DATA_FILE_NAME = "MNDDTR.mnd";
 
     /**
      * The state of the add_note button,
@@ -128,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(homeToolbar);
 
-        notesList = readTypeFromStorage();
+        notesList = NotesIO.readTypeFromStorage(appContext);
 
         addNoteFab = findViewById(R.id.home_add_note_fab);
         addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
@@ -158,7 +136,10 @@ public class MainActivity extends AppCompatActivity {
 
         addNoteFab.setOnClickListener(v -> onFabExpanded());
 
-        addTextNoteFab.setOnClickListener(v -> addNoteDialog());
+        addTextNoteFab.setOnClickListener(v -> {
+            Intent addNoteInEditorIntent = new Intent(MainActivity.this, NoteEditorActivity.class);
+            startActivity(addNoteInEditorIntent);
+        });
     }
 
     @Override
@@ -167,78 +148,17 @@ public class MainActivity extends AppCompatActivity {
 
         notesArrayAdapter.notifyDataSetChanged();
 
-        saveNotesToStorage();
+        NotesIO.saveNotesToStorage(appContext);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        saveNotesToStorage();
+        NotesIO.saveNotesToStorage(appContext);
     }
 
-    /**
-     * Save the given {@code data} to the documents folder.
-     * This uses Google {@link Gson} to serialise the data to a {@code} String and writes it
-     * to the file whose name is specified by {@code fileName}.
-     *
-     * @see #readTypeFromStorage()
-     * @since 0.9.0
-     */
-    private void saveNotesToStorage() {
-        Gson gson = new Gson();
 
-        File dataFile = new File(getFilesDir().getPath() + '/' + DATA_FILE_NAME);
-
-        Log.d("Storage path", dataFile.getAbsolutePath());
-
-        try {
-            if (!dataFile.exists()) {
-                Log.d(NOTES_IO_TAG, "Data non-existent: " + dataFile.createNewFile());
-            }
-        } catch (IOException e) {
-            Log.d(NOTES_IO_TAG, "Unable to create save file, aborting save!");
-            e.printStackTrace(System.err);
-        }
-
-        try (FileWriter fileWriter = new FileWriter(dataFile);
-             BufferedWriter writer = new BufferedWriter(fileWriter)) {
-
-            gson.toJson(notesList, new TypeToken<List<Note>>() {
-            }.getType(), writer);
-            Log.d(NOTES_IO_TAG, "Save successful");
-        } catch (JsonIOException | IOException e) {
-            Log.d(NOTES_IO_TAG, "Unable to write to save file, aborting save!");
-            e.printStackTrace(System.err);
-        }
-    }
-
-    /**
-     * Retrieve saved data from the storage under the {@code fileName} specified.
-     *
-     * @see #saveNotesToStorage()
-     * @since 0.9.0
-     */
-
-    private List<Note> readTypeFromStorage() {
-        Gson gson = new Gson();
-
-        File dataFile = new File(appContext.getFilesDir().getPath() + '/' + DATA_FILE_NAME);
-
-        if (!dataFile.exists()) {
-            return new LinkedList<>();
-        }
-
-        try (FileReader fileReader = new FileReader(dataFile)) {
-            BufferedReader reader = new BufferedReader(fileReader);
-
-            return gson.fromJson(reader, new TypeToken<List<Note>>() {
-            }.getType());
-
-        } catch (IOException | JsonSyntaxException e) {
-            return new LinkedList<>();
-        }
-    }
 
     /**
      * Invoke a dialog where the user can input a new note's header.
