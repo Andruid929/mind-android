@@ -1,6 +1,6 @@
 # MIND Editor
 
-*A modern, open-source note editor app for Android focused on simplicity, privacy, and collaboration.*
+*A modern, open-source note editor app for Android focused on simplicity, privacy, and collaboration*.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
@@ -9,22 +9,39 @@
 ## Table of Contents
 
 - [Features](#features)
+- [Screenshots](#screenshots-v110)
 - [Getting Started](#getting-started)
+- [Downloads](#download-the-app)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
+- [Changelog](#changelog)
+- [Roadmap](#roadmap)
 - [Contact](#contact)
 
 ---
 
 ## Features
 
-- Simple and intuitive note editing!
-- Light and dark themes!
-- Fully offline!
-- Open for contributions!
+- 📝 Simple and intuitive note editing
+- 🌙 Light and dark themes
+- 🔐 No special permissions
+- 🚫 Fully offline
+- 🤝 Open for contributions
+
+---
+
+## Screenshots (v1.1.0)
+
+| Light mode                                       | Dark Mode                                      |
+|--------------------------------------------------|------------------------------------------------|
+| ![Light](screenshots/mind_editor_home_light.jpg) | ![Dark](screenshots/mind_editor_home_dark.jpg) |
+| ![Light](screenshots/note_preview_light.jpg)     | ![Dark](screenshots/note_preview_dark.jpg)     |
+| ![Light](screenshots/note_editor_light.jpg)      | ![Dark](screenshots/note_editor_dark.jpg)      |
+
+<sub>UI in both light and dark mode.</sub>
 
 ---
 
@@ -38,26 +55,36 @@
 
 ---
 
+## Download the app
+
+For now,
+the app is only available via [GitHub releases](https://github.com/Andruid929/mind-android/releses).
+
+---
+
 ## Installation
 
 1. **Clone the repository:**
     ```bash
     git clone https://github.com/Andruid929/mind-android.git
     ```
-2. **Open in Android Studio.**
+2. **Open in Android Studio*.*
 3. **Build and run** on your device or emulator.
 
 ---
 
 ## Usage
 
-- Launch the app and start taking notes!
+- Launch the app
+- Click the "+" icon to reveal the new note button
+- Add your note
 
 ---
 
 ## Contributing
 
-The biggest reason of making this repo public was for contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+One of the main reasons for making this repo public was for contributions!
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 1. Fork this repo
 2. Create your feature branch (`git checkout -b feat/your-feature`)
@@ -77,6 +104,18 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 - [Android documentation](https://developer.android.com/docs)
 - Special thanks to all [contributors](CONTRIBUTORS.md)!
+
+---
+
+## Changelog
+
+See the [changelog](CHANGELOG.md) for detailed list of updates and version history.
+
+---
+
+## Roadmap
+
+Check out [ROADMAP.md](ROADMAP.md) for planned features and ideas for Mind Editor.
 
 ---
 

@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Get support
+    url: https://github.com/Andruid929/mind-editor/discusssions
+    about: Use GitHub discussions for questions or ideas not issue specific
+issue_templates:
+  - name: "🪲 Bug report"
+    description: Report a bug about Mind Editor
+    title: "[Bug]: "
+    labels: ["bug"]
+    body: ./bug_report.md
+
+  - name: "✨ Feature request"
+    description: Suggest a new feature or improvement
+    title: "[Feature]"
+    labels: ["enhancement"]
+    body: ./feature_request.md
