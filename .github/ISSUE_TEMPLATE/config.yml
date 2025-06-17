@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Get support
-    url: https://github.com/Andruid929/mind-editor/discusssions
+    url: https://github.com/Andruid929/mind-android/discusssions
     about: Use GitHub discussions for questions or ideas not issue specific
 issue_templates:
   - name: "🪲 Bug report"

@@ -27,6 +27,6 @@ Feel free to suggest features via [issues](https://github.com/Andruid929/mind-an
 See something on the future ideas you think you can help with?
 1. Refer to [CONTRIBUTING.md](CONTRIBUTING.md)
 2. Read the [code of conduct](CODE_OF_CONDUCT.md)
-3. Join the conversation in [Discussions](https://github.com/Andruid929/mind-editor/discussions)
+3. Join the conversation in [Discussions](https://github.com/Andruid929/mind-android/discussions)
 
 Let's shape the future of Mind editor together.
