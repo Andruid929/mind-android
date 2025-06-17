@@ -9,7 +9,7 @@
 ## Table of Contents
 
 - [Features](#features)
-- [Screenshots](#screenshots-v110)
+- [Screenshots](#screenshots-v100)
 - [Getting Started](#getting-started)
 - [Downloads](#download-the-app)
 - [Installation](#installation)
@@ -58,7 +58,7 @@
 ## Download the app
 
 For now,
-the app is only available via [GitHub releases](https://github.com/Andruid929/mind-android/releses).
+the app is only available via [GitHub releases](https://github.com/Andruid929/mind-android/releases).
 
 ---
 
