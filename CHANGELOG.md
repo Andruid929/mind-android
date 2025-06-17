@@ -5,7 +5,7 @@ This project adheres to [Semantic versioning](https://semver.org/).
 
 ---
 
-## [1.1.0] - 2025-06-17
+## [1.1.0-beta.1] - 2025-06-17
 
 ## Changed
 - Adding a new note now opens in a new page instead of a dialog.
