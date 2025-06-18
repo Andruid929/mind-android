@@ -19,6 +19,7 @@ import net.druidlabs.mindsync.MainActivity;
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notesio.NotesIO;
+import net.druidlabs.mindsync.util.AppResources;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -34,7 +35,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     /**
      * The {@code View} that displays the number of characters the note has.
-     * */
+     */
 
     private TextView bodyCharCountTextView;
 
@@ -44,7 +45,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     /**
      * Check if this activity was created for adding a new note
      * or for editing an existing one.
-     * */
+     */
 
     private boolean isForNoteAdding = false;
 
@@ -99,15 +100,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         int numOfCharsInBody = noteBody.length();
 
-        String charText;
 
-        if (numOfCharsInBody == 1) {
-            charText = "1 " + getStringResource(R.string.editor_note_info_character);
-        } else {
-            charText = numOfCharsInBody + " " + getStringResource(R.string.editor_note_info_character_num);
-        }
-
-        bodyCharCountTextView.setText(charText);
+        bodyCharCountTextView.setText(getCharText(numOfCharsInBody));
         noteCreationTimeTextView.setText(noteTimeStamp);
 
         noteHeadingEditText.setText(noteHeading);
@@ -141,17 +135,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 currentNote.setBody(s.toString());
 
-                String charText;
-
                 int numOfCharsInBody = s.length();
 
-                if (numOfCharsInBody == 1) {
-                    charText = "1 " + getStringResource(R.string.editor_note_info_character);
-                } else {
-                    charText = numOfCharsInBody + " " + getStringResource(R.string.editor_note_info_character_num);
-                }
-
-                bodyCharCountTextView.setText(charText);
+                bodyCharCountTextView.setText(getCharText(numOfCharsInBody));
             }
 
             @Override
@@ -188,14 +174,19 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the string resource from the specific resource ID.
+     * Get text showing how many characters are in the note's body.
      *
-     * @param resId the string resource ID.
-     * @return the String represented by the {@code resID}.
-     * @since 0.7.0
+     * @param numOfCharsInBody number of characters in note body. Should be {@link Note#getBody() noteBody}{@code .length()}.
+     * @return {@code 1 character} if there's a single character
+     * and {@code # characters} with # being the number of characters specified by {@code numOfCharsInBody}.
+     * @since 1.1.0-beta.2
      */
 
-    private String getStringResource(int resId) {
-        return getResources().getString(resId);
+    private String getCharText(int numOfCharsInBody) {
+        if (numOfCharsInBody == 1) {
+            return "1 " + AppResources.getStringResource(R.string.editor_note_info_character, NoteEditorActivity.this);
+        } else {
+            return numOfCharsInBody + " " + AppResources.getStringResource(R.string.editor_note_info_character_num, NoteEditorActivity.this);
+        }
     }
 }

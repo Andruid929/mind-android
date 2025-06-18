@@ -34,6 +34,11 @@
     <string name="note_options_btn_neg">Delete</string>
     <string name="note_options_btn_neu">Cancel</string>
 
+    <!-- Note deletion confirmation dialog -->
+    <string name="note_del_confirm_pos_btn">Cancel</string>
+    <string name="note_del_confirm_neg_btn">Delete</string>
+    <string name="note_del_confirm_text">will be deleted, proceed?</string>
+    <string name="note_deleted_toast">deleted</string>
 
     <!-- Note Editor Activity -->
     <string name="editor_default_note_header">Note header</string>
