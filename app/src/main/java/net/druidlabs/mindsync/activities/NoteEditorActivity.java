@@ -83,7 +83,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             //currentNoteIndex is -1, user is creating a new note
             currentNote = new Note(Note.TEST_HEADING, Note.TEST_BODY);
 
-            noteHeading = currentNote.getTimeStamp();
+            noteHeading = currentNote.getNumericalTimeStamp();
             noteBody = "";
 
             currentNote.setHeading(noteHeading);
@@ -155,7 +155,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             return;
         }
 
-        String timestamp = currentNote.getTimeStamp();
+        String timestamp = currentNote.getNumericalTimeStamp();
 
         String presetHeading = noteHeadingEditText.getText().toString();
         String presetBody = noteBodyEditText.getText().toString();
