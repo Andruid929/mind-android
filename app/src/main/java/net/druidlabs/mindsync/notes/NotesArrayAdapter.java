@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,8 @@ import androidx.cardview.widget.CardView;
 
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
+import net.druidlabs.mindsync.notesio.NotesIO;
+import net.druidlabs.mindsync.util.AppResources;
 
 import java.util.List;
 
@@ -35,16 +38,16 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     private final LayoutInflater inflater;
     private final int resource;
 
-    private final Context context;
+    private final Context uiContext;
 
-    public NotesArrayAdapter(@NonNull Context context, int resource, @NonNull List<N> notes) {
-        super(context, resource, notes);
+    public NotesArrayAdapter(@NonNull Context uiContext, int resource, @NonNull List<N> notes) {
+        super(uiContext, resource, notes);
 
         this.notes = notes;
         this.resource = resource;
-        this.context = context;
+        this.uiContext = uiContext;
 
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) uiContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -87,13 +90,15 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
             noteEditorIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
             noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
 
-            context.startActivity(noteEditorIntent);
+            uiContext.startActivity(noteEditorIntent);
         });
 
         viewHolder.noteCardView.setOnLongClickListener(v -> {
             View dialogView = inflater.inflate(R.layout.note_options_dialog, null, false);
 
-            AlertDialog noteOptionsDialog = createOptionsDialog(position, dialogView).create();
+            View confirmDialogView = inflater.inflate(R.layout.delete_confirmation_dialog, null, false);
+
+            AlertDialog noteOptionsDialog = createOptionsDialog(position, dialogView, confirmDialogView, note.getHeading()).create();
 
             TextView dialogNoteHeader = dialogView.findViewById(R.id.note_options_preview_header);
             TextView dialogNoteBody = dialogView.findViewById(R.id.note_options_preview_body);
@@ -112,14 +117,16 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     /**
      * Create a new note options dialog when a note is held.
      *
-     * @param position the position/index of the note held.
-     * @param dialogView the inflated dialog layout resource
+     * @param position      the position/index of the note held.
+     * @param dialogView    the inflated dialog layout resource
+     * @param confirmDialog the inflated confirmation dialog.
+     * @param noteHeading   the heading the note held.
      * @return a new dialog builder with two buttons.
      * @since 0.10.0
      * */
 
-    private @NonNull AlertDialog.Builder createOptionsDialog(int position, View dialogView) {
-        return new AlertDialog.Builder(context, R.style.NoteDialogTheme)
+    private @NonNull AlertDialog.Builder createOptionsDialog(int position, View dialogView, View confirmDialog, String noteHeading) {
+        return new AlertDialog.Builder(uiContext, R.style.NoteDialogTheme)
 
                 .setView(dialogView)
                 //Open the note editor to edit the note
@@ -128,17 +135,52 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
                     noteEditorIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                     noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
 
-                    context.startActivity(noteEditorIntent);
+                    uiContext.startActivity(noteEditorIntent);
                 })
                 //Delete the note
                 .setNegativeButton(R.string.note_options_btn_neg, ((dialog, which) -> {
-                    dialog.dismiss();
+                    TextView confirmDeleteTextView = confirmDialog.findViewById(R.id.note_delete_confirm_dialog_textview);
 
-                    notes.remove(position);
+                    //Note heading in quotes before the delete confirmation text
+                    String confirmText = "\"" + noteHeading + "\" " +
+                            AppResources.getStringResource(R.string.note_del_confirm_text, uiContext);
 
-                    notifyDataSetChanged();
+                    confirmDeleteTextView.setText(confirmText);
+
+                    AlertDialog deleteConfirmDialog = confirmDeleteDialog(position, confirmDialog, noteHeading).create();
+
+                    deleteConfirmDialog.show();
                 }));
 
+    }
+
+    /**
+     * Create a confirmation dialog when a note is being deleted.
+     *
+     * @param position    the position/index of the note held.
+     * @param dialogView  the inflated dialog layout resource
+     * @param noteHeading the heading of the note being deleted.
+     * @return a new confirmation dialog builder with two buttons.
+     * @since 1.1.0-beta.2
+     */
+
+    private @NonNull AlertDialog.Builder confirmDeleteDialog(int position, View dialogView, String noteHeading) {
+        return new AlertDialog.Builder(uiContext, R.style.NoteDialogTheme)
+                .setView(dialogView)
+                //If the user cancels
+                .setPositiveButton(R.string.note_del_confirm_pos_btn, ((dialog, which) -> dialog.dismiss()))
+                //If the user clicks delete
+                .setNegativeButton(R.string.note_del_confirm_neg_btn, ((dialog, which) -> {
+                    notes.remove(position);
+                    notifyDataSetChanged();
+
+                    NotesIO.saveNotesToStorage(uiContext);
+
+                    String noteDeletionConfirmationText = noteHeading + " " +
+                            AppResources.getStringResource(R.string.note_deleted_toast, uiContext);
+
+                    Toast.makeText(uiContext, noteDeletionConfirmationText, Toast.LENGTH_SHORT).show();
+                }));
     }
 
     /**
