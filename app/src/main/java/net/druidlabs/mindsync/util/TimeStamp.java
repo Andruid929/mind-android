@@ -72,7 +72,7 @@ public final class TimeStamp {
      * An example is of timestamp returned in this format is {@code 20250611_18:32}.
      *
      * @return the date and time this method was called in all numbers and without spaces.
-     * @since 1.1.0-beta.3
+     * @since 1.1.0-beta.2
      */
 
     public String getNumericalTimeStamp() {

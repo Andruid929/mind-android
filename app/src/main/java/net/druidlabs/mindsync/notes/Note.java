@@ -130,7 +130,7 @@ public final class Note {
      * This note's timestamp in all numbers and without spaces.
      *
      * @return the date and time this note was created.
-     * @since 1.1.0-beta.3
+     * @since 1.1.0-beta.2
      */
 
     @NonNull
