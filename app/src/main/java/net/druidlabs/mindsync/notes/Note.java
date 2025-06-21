@@ -36,6 +36,7 @@ public final class Note {
     private String body;
 
     private final String timeStamp;
+    private final String numericalTimestamp;
 
     /**
      * Get a new note instance.
@@ -51,7 +52,10 @@ public final class Note {
         this.heading = heading;
         this.body = body;
 
-        timeStamp = TimeStamp.getTimeStamp();
+        TimeStamp time = TimeStamp.createTimestamp();
+
+        timeStamp = time.getTimeStamp();
+        numericalTimestamp = time.getNumericalTimeStamp();
 
         if (heading.isBlank()) {
             return;
@@ -118,11 +122,21 @@ public final class Note {
      */
     @NonNull
     public String getTimeStamp() {
-        if (timeStamp == null) {
-            return TimeStamp.DEFAULT_TIMESTAMP;
-        }
+        return Objects.requireNonNullElse(timeStamp, TimeStamp.DEFAULT_TIMESTAMP);
 
-        return timeStamp;
+    }
+
+    /**
+     * This note's timestamp in all numbers and without spaces.
+     *
+     * @return the date and time this note was created.
+     * @since 1.1.0-beta.2
+     */
+
+    @NonNull
+    public String getNumericalTimeStamp() {
+        return Objects.requireNonNullElse(numericalTimestamp, TimeStamp.DEFAULT_NUMERICAL_TIMESTAMP);
+
     }
 
     @Override
@@ -130,11 +144,11 @@ public final class Note {
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
         return Objects.equals(heading, note.heading) && Objects.equals(body, note.body)
-                && Objects.equals(timeStamp, note.timeStamp);
+                && Objects.equals(timeStamp, note.timeStamp) && Objects.equals(numericalTimestamp, note.numericalTimestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(heading, body, timeStamp);
+        return Objects.hash(heading, body, timeStamp, numericalTimestamp);
     }
 }

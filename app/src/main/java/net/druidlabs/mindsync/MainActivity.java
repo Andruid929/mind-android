@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -20,6 +19,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,9 +29,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
 import net.druidlabs.mindsync.notes.Note;
-import net.druidlabs.mindsync.notes.NotesArrayAdapter;
+import net.druidlabs.mindsync.notes.NotesRecyclerAdapter;
 import net.druidlabs.mindsync.notesio.NotesIO;
 import net.druidlabs.mindsync.ui.Animations;
+import net.druidlabs.mindsync.util.GridSpacing;
 
 import java.util.List;
 import java.util.Objects;
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
      * Primary {@code ArrayAdapter} for the {@link #notesList}.
      */
 
-    private NotesArrayAdapter<Note> notesArrayAdapter;
+    private NotesRecyclerAdapter notesAdapter;
 
     /**
      * The state of the add_note button,
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         MaterialToolbar homeToolbar = findViewById(R.id.home_toolbar);
 
-        GridView notesListGridView = findViewById(R.id.home_notes_gridview);
+        RecyclerView notesListRecyclerView = findViewById(R.id.home_notes_gridview);
 
         setSupportActionBar(homeToolbar);
 
@@ -111,11 +113,14 @@ public class MainActivity extends AppCompatActivity {
         addNoteFab = findViewById(R.id.home_add_note_fab);
         addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
 
-        notesArrayAdapter = new NotesArrayAdapter<>(MainActivity.this, R.layout.custom_notes_tiles, notesList);
+        notesAdapter = new NotesRecyclerAdapter(notesList, MainActivity.this);
 
-        notesListGridView.setAdapter(notesArrayAdapter);
+        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        notesListRecyclerView.setLayoutManager(notesLayoutManager);
 
-        notesArrayAdapter.notifyDataSetChanged();
+        notesListRecyclerView.setAdapter(notesAdapter);
+
+        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -25));
 
         homeNavigationView.bringToFront();
 
@@ -146,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        notesArrayAdapter.notifyDataSetChanged();
+        notesAdapter.notifyItemRangeChanged(0, notesList.size());
 
         NotesIO.saveNotesToStorage(appContext);
     }
@@ -157,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
         NotesIO.saveNotesToStorage(appContext);
     }
-
 
 
     /**
@@ -189,8 +193,6 @@ public class MainActivity extends AppCompatActivity {
             dialog.dismiss();
 
             new Note(newNoteHeading, "");
-
-            notesArrayAdapter.notifyDataSetChanged();
 
             Intent noteEditorIntent = new Intent(appContext, NoteEditorActivity.class);
             noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, notesList.size() - 1);

@@ -1,20 +1,17 @@
 package net.druidlabs.mindsync.notes;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
@@ -24,79 +21,60 @@ import net.druidlabs.mindsync.util.AppResources;
 import java.util.List;
 
 /**
- * This class is what allows the user to interact with the {@code List<Note>}.
+ * The adapter for the notes {@code RecyclerView}.
  *
  * @author Andrew Jones
  * @version 1.0
- * @see android.widget.ArrayAdapter ArrayAdapter
- * @since 0.2.0
+ * @since 1.1.0-beta.2
  */
 
-public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
+public class NotesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final List<N> notes;
-    private final LayoutInflater inflater;
-    private final int resource;
+    private final List<Note> notesList;
 
     private final Context uiContext;
 
-    public NotesArrayAdapter(@NonNull Context uiContext, int resource, @NonNull List<N> notes) {
-        super(uiContext, resource, notes);
+    private final LayoutInflater viewInflater;
 
-        this.notes = notes;
-        this.resource = resource;
+    public NotesRecyclerAdapter(List<Note> notesList, Context uiContext) {
+        this.notesList = notesList;
         this.uiContext = uiContext;
 
-        inflater = (LayoutInflater) uiContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    @Override
-    public int getCount() {
-        return super.getCount();
-    }
-
-    @Nullable
-    @Override
-    public N getItem(int position) {
-        return notes.get(position);
+        viewInflater = (LayoutInflater) uiContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        ViewHolder viewHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View noteView = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_notes_tiles, parent, false);
+        return new ViewHolder(noteView);
+    }
 
-        if (convertView == null) {
-            convertView = inflater.inflate(resource, parent, false);
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-            viewHolder = new ViewHolder();
+        Note note = notesList.get(position);
 
-            viewHolder.noteCardView = convertView.findViewById(R.id.note_cardview);
-            viewHolder.noteHeader = convertView.findViewById(R.id.note_heading_textview);
-            viewHolder.noteBody = convertView.findViewById(R.id.note_body_textview);
+        TextView noteHeadingTextView = holder.itemView.findViewById(R.id.note_heading_textview);
+        TextView noteBodyTextView = holder.itemView.findViewById(R.id.note_body_textview);
 
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
+        CardView noteCardView = holder.itemView.findViewById(R.id.note_cardview);
 
-        Note note = notes.get(position);
+        noteHeadingTextView.setText(note.getHeading());
+        noteBodyTextView.setText(note.getBody());
 
-        viewHolder.noteHeader.setText(note.getHeading());
-        viewHolder.noteBody.setText(note.getBody());
-
-        viewHolder.noteCardView.setOnClickListener(v -> {
-            Intent noteEditorIntent = new Intent(getContext(), NoteEditorActivity.class);
-            noteEditorIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        noteCardView.setOnClickListener(v -> {
+            Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+            noteEditorIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
 
             uiContext.startActivity(noteEditorIntent);
         });
 
-        viewHolder.noteCardView.setOnLongClickListener(v -> {
-            View dialogView = inflater.inflate(R.layout.note_options_dialog, null, false);
+        noteCardView.setOnLongClickListener(v -> {
+            View dialogView = viewInflater.inflate(R.layout.note_options_dialog, null, false);
 
-            View confirmDialogView = inflater.inflate(R.layout.delete_confirmation_dialog, null, false);
+            View confirmDialogView = viewInflater.inflate(R.layout.delete_confirmation_dialog, null, false);
 
             AlertDialog noteOptionsDialog = createOptionsDialog(position, dialogView, confirmDialogView, note.getHeading()).create();
 
@@ -110,8 +88,11 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
 
             return true;
         });
+    }
 
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return notesList.size();
     }
 
     /**
@@ -123,7 +104,7 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
      * @param noteHeading   the heading the note held.
      * @return a new dialog builder with two buttons.
      * @since 0.10.0
-     * */
+     */
 
     private @NonNull AlertDialog.Builder createOptionsDialog(int position, View dialogView, View confirmDialog, String noteHeading) {
         return new AlertDialog.Builder(uiContext, R.style.NoteDialogTheme)
@@ -131,8 +112,8 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
                 .setView(dialogView)
                 //Open the note editor to edit the note
                 .setPositiveButton(R.string.note_options_btn_pos, (dialog, which) -> {
-                    Intent noteEditorIntent = new Intent(getContext(), NoteEditorActivity.class);
-                    noteEditorIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                    Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+                    noteEditorIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
 
                     uiContext.startActivity(noteEditorIntent);
@@ -171,8 +152,8 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
                 .setPositiveButton(R.string.note_del_confirm_pos_btn, ((dialog, which) -> dialog.dismiss()))
                 //If the user clicks delete
                 .setNegativeButton(R.string.note_del_confirm_neg_btn, ((dialog, which) -> {
-                    notes.remove(position);
-                    notifyDataSetChanged();
+                    notesList.remove(position);
+                    notifyItemRemoved(position);
 
                     NotesIO.saveNotesToStorage(uiContext);
 
@@ -184,17 +165,27 @@ public class NotesArrayAdapter<N extends Note> extends ArrayAdapter<N> {
     }
 
     /**
-     * This inner class allows the ArrayAdapter to implement the
-     * view holder pattern to increase scrolling performance in the view.
+     * ViewHolder for the {@code NotesRecyclerAdapter}.
      *
      * @author Andrew Jones
-     * @version 1.0
-     * @since 0.2.0
+     * @see androidx.recyclerview.widget.RecyclerView.ViewHolder RecyclerView.ViweHolder
+     * @since 1.1.0-beta.2
      */
 
-    private static class ViewHolder {
+    private static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView noteHeaderTextView;
+        private TextView noteBodyTextView;
+
         private CardView noteCardView;
-        private TextView noteHeader;
-        private TextView noteBody;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            noteHeaderTextView = itemView.findViewById(R.id.note_heading_textview);
+            noteBodyTextView = itemView.findViewById(R.id.note_body_textview);
+            noteCardView = itemView.findViewById(R.id.note_cardview);
+        }
+
     }
 }
