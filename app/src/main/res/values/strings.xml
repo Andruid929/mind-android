@@ -2,8 +2,6 @@
     <!-- App wide -->
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
-    <string name="blank_note_warning">Note heading cannot be blank</string>
-
 
     <!-- Home page (MainActivity) -->
     <string name="home_add_note_btn">Add new note</string>
@@ -43,8 +41,10 @@
     <!-- Note Editor Activity -->
     <string name="editor_default_note_header">Note header</string>
     <string name="editor_body_hint">Start typing</string>
-    <string name="editor_heading_hint">Note heading here</string>
+    <string name="editor_heading_hint">Note title here</string>
     <string name="editor_go_back_btn_content_desc">Go back button</string>
+
+    <string name="editor_blank_heading">Note title blank, changes not saved</string>
 
     <!-- Note info -->
     <string name="editor_note_info_separator">|</string>

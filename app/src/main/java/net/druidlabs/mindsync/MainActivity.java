@@ -9,9 +9,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,17 +31,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.textfield.TextInputEditText;
 
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
 import net.druidlabs.mindsync.notes.Note;
+import net.druidlabs.mindsync.notes.NoteClickListener;
 import net.druidlabs.mindsync.notes.NotesRecyclerAdapter;
 import net.druidlabs.mindsync.notesio.NotesIO;
 import net.druidlabs.mindsync.ui.Animations;
+import net.druidlabs.mindsync.util.AppResources;
 import net.druidlabs.mindsync.util.GridSpacing;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * The activity you boot into when you launch the application.
@@ -47,7 +53,7 @@ import java.util.Objects;
  * @since 0.0.1
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NoteClickListener {
 
     /**
      * The button with the "+" icon.
@@ -75,13 +81,18 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * The state of the add_note button,
-     * this lets the cycle know when to start the expand animation.
+     * this lets the cycle know when to start the "expand" animation.
      * <p>False by default
      */
 
     private boolean isAddNoteFabClicked;
 
     private Context appContext;
+
+    private Context uiContext;
+
+    private ActivityResultLauncher<Intent> newNoteResultLauncher;
+    private ActivityResultLauncher<Intent> editNoteResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         appContext = getApplicationContext();
 
+        uiContext = MainActivity.this;
+
         DrawerLayout homeDrawerLayout = findViewById(R.id.main);
 
         NavigationView homeNavigationView = findViewById(R.id.home_drawer_nav_view);
@@ -113,9 +126,9 @@ public class MainActivity extends AppCompatActivity {
         addNoteFab = findViewById(R.id.home_add_note_fab);
         addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
 
-        notesAdapter = new NotesRecyclerAdapter(notesList, MainActivity.this);
+        notesAdapter = new NotesRecyclerAdapter(notesList, this);
 
-        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(uiContext, 2);
         notesListRecyclerView.setLayoutManager(notesLayoutManager);
 
         notesListRecyclerView.setAdapter(notesAdapter);
@@ -142,18 +155,14 @@ public class MainActivity extends AppCompatActivity {
         addNoteFab.setOnClickListener(v -> onFabExpanded());
 
         addTextNoteFab.setOnClickListener(v -> {
-            Intent addNoteInEditorIntent = new Intent(MainActivity.this, NoteEditorActivity.class);
-            startActivity(addNoteInEditorIntent);
+            Intent addNoteInEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+
+            newNoteResultLauncher.launch(addNoteInEditorIntent);
         });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        newNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), newNoteResultCallback());
 
-        notesAdapter.notifyItemRangeChanged(0, notesList.size());
-
-        NotesIO.saveNotesToStorage(appContext);
+        editNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), editedNoteResultCallback());
     }
 
     @Override
@@ -163,45 +172,166 @@ public class MainActivity extends AppCompatActivity {
         NotesIO.saveNotesToStorage(appContext);
     }
 
+    @Override
+    public void onNoteClick(int position) {
+        Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+        noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
+
+        editNoteResultLauncher.launch(noteEditorIntent);
+    }
+
+    @Override
+    public void onNoteLongClick(int position) {
+        LayoutInflater viewInflater = LayoutInflater.from(uiContext);
+
+        View dialogView = viewInflater.inflate(R.layout.note_options_dialog, null);
+
+        View confirmDialogView = viewInflater.inflate(R.layout.delete_confirmation_dialog, null);
+
+        Note heldNote = notesList.get(position);
+
+        AlertDialog noteOptionsDialog = createOptionsDialog(position, dialogView, confirmDialogView, heldNote.getHeading()).create();
+
+        TextView dialogNoteHeader = dialogView.findViewById(R.id.note_options_preview_header);
+        TextView dialogNoteBody = dialogView.findViewById(R.id.note_options_preview_body);
+
+        dialogNoteHeader.setText(heldNote.getHeading());
+        dialogNoteBody.setText(heldNote.getBody());
+
+        noteOptionsDialog.show();
+    }
 
     /**
-     * Invoke a dialog where the user can input a new note's header.
-     * If the input is not blank, the note editor activity will be opened and the new note registered.
+     * Check if new note was added to the {@link #notesList notes list}.
+     * <p>When a new note is added in the {@link NoteEditorActivity note editor},
+     * a "new note added" result is set which this method attempts to retrieve.
+     * If a result is received and returns true, the adapter is notified of the added
+     * note at the last index.
      *
-     * @since 0.8.0
+     * @since 1.1.0-beta.3
      */
 
-    private void addNoteDialog() {
-        LayoutInflater viewInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        View noteDialogView = viewInflater.inflate(R.layout.note_create_dialog, null, false);
-
-        TextInputEditText dialogBox = noteDialogView.findViewById(R.id.add_note_dialog_textinput_edittext);
-
-        AlertDialog.Builder addNoteDialogBuilder = new AlertDialog.Builder(this, R.style.NoteDialogTheme);
-
-        addNoteDialogBuilder.setView(noteDialogView);
-        addNoteDialogBuilder.setPositiveButton(R.string.add_note_dialog_pos_btn, (dialog, which) -> {
-            String newNoteHeading = Objects.requireNonNull(dialogBox.getText()).toString();
-
-            if (newNoteHeading.isBlank()) {
-                dialog.dismiss();
-                Toast.makeText(appContext, R.string.blank_note_warning, Toast.LENGTH_SHORT).show();
+    private ActivityResultCallback<ActivityResult> newNoteResultCallback() {
+        return result -> {
+            if (result.getResultCode() != RESULT_OK) {
                 return;
             }
 
-            dialog.dismiss();
+            Intent data = result.getData();
 
-            new Note(newNoteHeading, "");
+            if (data == null) {
+                return;
+            }
 
-            Intent noteEditorIntent = new Intent(appContext, NoteEditorActivity.class);
-            noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, notesList.size() - 1);
-            startActivity(noteEditorIntent);
-        });
-        addNoteDialogBuilder.setNegativeButton(R.string.add_note_dialog_neg_btn, ((dialog, which) -> dialog.dismiss()));
-        addNoteDialogBuilder.create();
+            boolean newNoteAdded = data.getBooleanExtra(NoteEditorActivity.NEW_NOTE_ADDED_EXTRA, false);
 
-        addNoteDialogBuilder.show();
+            if (newNoteAdded) {
+                notesAdapter.notifyItemInserted(notesList.size() - 1);
+            }
+        };
+    }
+
+    /**
+     * Check if a note in the {@link #notesList notes list} was edited
+     * and refresh the {@link #notesAdapter  notes adapter} if a note was changed.
+     *
+     * @since 1.1.0-beta.3
+     */
+
+    private ActivityResultCallback<ActivityResult> editedNoteResultCallback() {
+        return result -> {
+            if (result.getResultCode() != RESULT_OK) {
+                return;
+            }
+
+            Intent data = result.getData();
+
+            if (data == null) {
+                return;
+            }
+
+            int editedNoteIndex = data.getIntExtra(NoteEditorActivity.EDITED_NOTE_INDEX_EXTRA, -1);
+
+            if (editedNoteIndex == -1) {
+                return;
+            }
+
+            notesAdapter.notifyItemChanged(editedNoteIndex);
+        };
+    }
+
+    /**
+     * Create a new note options dialog when a note is held.
+     *
+     * @param position      the position/index of the note held.
+     * @param dialogView    the inflated dialog layout resource
+     * @param confirmDialog the inflated confirmation dialog.
+     * @param noteHeading   the heading the note held.
+     * @return a new dialog builder with two buttons.
+     * @since 0.10.0
+     */
+
+    private @NonNull AlertDialog.Builder createOptionsDialog(int position, View dialogView,
+                                                             View confirmDialog, String noteHeading) {
+        return new AlertDialog.Builder(uiContext, R.style.NoteDialogTheme)
+
+                .setView(dialogView)
+                //Open the note editor to edit the note
+                .setPositiveButton(R.string.note_options_btn_pos, (dialog, which) -> {
+                    Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+
+                    //Send the clicked note's index to the NoteEditorActivity
+                    noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position);
+
+                    editNoteResultLauncher.launch(noteEditorIntent);
+                })
+                //Delete the note
+                .setNegativeButton(R.string.note_options_btn_neg, ((dialog, which) -> {
+                    TextView confirmDeleteTextView = confirmDialog.findViewById(R.id.note_delete_confirm_dialog_textview);
+
+                    //Note heading in quotes before the delete confirmation text
+                    String confirmText = "\"" + noteHeading + "\" " +
+                            AppResources.getStringResource(R.string.note_del_confirm_text, uiContext);
+
+                    confirmDeleteTextView.setText(confirmText);
+
+                    AlertDialog deleteConfirmDialog = confirmDeleteDialog(position, confirmDialog, noteHeading).create();
+
+                    deleteConfirmDialog.show();
+                }));
+
+    }
+
+    /**
+     * Create a confirmation dialog when a note is being deleted.
+     *
+     * @param position    the position/index of the note held.
+     * @param dialogView  the inflated dialog layout resource
+     * @param noteHeading the heading of the note being deleted.
+     * @return a new confirmation dialog builder with two buttons.
+     * @since 1.1.0-beta.2
+     */
+
+    private @NonNull AlertDialog.Builder confirmDeleteDialog(int position, View dialogView, String noteHeading) {
+        return new AlertDialog.Builder(uiContext, R.style.NoteDialogTheme)
+                .setView(dialogView)
+                //If the user cancels
+                .setPositiveButton(R.string.note_del_confirm_pos_btn, ((dialog, which) -> dialog.dismiss()))
+                //If the user clicks delete
+                .setNegativeButton(R.string.note_del_confirm_neg_btn, ((dialog, which) -> {
+                    notesList.remove(position);
+
+                    //Andruid929: I use this as a last resort,
+                    // notifyItemRemoved(int) would crash the app after deleting multiple notes.
+                    notesAdapter.notifyDataSetChanged();
+
+                    NotesIO.saveNotesToStorage(uiContext);
+
+                    String noteDeletionConfirmationText = noteHeading + " " +
+                            AppResources.getStringResource(R.string.note_deleted_toast, uiContext);
+
+                    Toast.makeText(uiContext, noteDeletionConfirmationText, Toast.LENGTH_SHORT).show();
+                }));
     }
 
     /**

@@ -19,8 +19,22 @@ import java.util.Objects;
 
 public final class Note {
 
+    /**
+     * A constant for note heading testing.
+     */
+
     public static final String TEST_HEADING = "Testing header";
+
+    /**
+     * A constant for note body testing.
+     */
+
     public static final String TEST_BODY = "Testing body";
+
+    /**
+     * Intent extra key for an index of a note to be edited in the NoteEditorActivity.
+     */
+
     public static final String INTENT_NOTE_POSITION = "Clicked note position";
 
     /**

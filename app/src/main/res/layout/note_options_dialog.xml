@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/note_options_preview_header"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="6dp"
         android:text="@string/note_options_header"
@@ -21,6 +21,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:paddingBottom="8dp"
         app:layout_constraintStart_toStartOf="@id/note_options_preview_header"
         app:layout_constraintTop_toBottomOf="@id/note_options_preview_header">
 
@@ -30,9 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="11dp"
             android:layout_marginTop="3dp"
-            android:layout_marginBottom="6dp"
             android:text="@string/note_options_body"
             android:textColor="@color/textPrimaryColour"
+            android:autoLink="email|phone|web"
             android:textSize="15sp" />
 
     </ScrollView>
