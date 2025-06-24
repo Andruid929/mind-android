@@ -1,5 +1,6 @@
 package net.druidlabs.mindsync.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +32,33 @@ import net.druidlabs.mindsync.util.AppResources;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
+    /**
+     * The key for the result extra when a new note is added.
+     *
+     * @since 1.1.0-beta.3
+     */
+
+    public static final String NEW_NOTE_ADDED_EXTRA = "New note added";
+
+    /**
+     * The key for the result extra when a note is edited.
+     *
+     * @since 1.1.0-beta.3
+     */
+
+    public static final String EDITED_NOTE_INDEX_EXTRA = "Note edited";
+
+    /**
+     * The note being edited in this activity.
+     */
+
     private Note currentNote;
+
+    /**
+     * The notes list index of the note being edited.
+     */
+
+    private int currentNoteIndex;
 
     /**
      * The {@code View} that displays the number of characters the note has.
@@ -39,8 +66,29 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     private TextView bodyCharCountTextView;
 
+    /**
+     * The {@code View} where the user edits the note heading.
+     */
+
     private EditText noteHeadingEditText;
+
+    /**
+     * The {@code View} where the user edits the note body.
+     */
+
     private EditText noteBodyEditText;
+
+    /**
+     * The saved note heading before the note is edited.
+     */
+
+    private String originalHeading;
+
+    /**
+     * The saved note body before editing.
+     */
+
+    private String originalBody;
 
     /**
      * Check if this activity was created for adding a new note
@@ -72,7 +120,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         goBackBtn.setOnClickListener(v -> finish());
 
         //The clicked note's index
-        int currentNoteIndex = getIntent().getIntExtra(Note.INTENT_NOTE_POSITION, -1);
+        currentNoteIndex = getIntent().getIntExtra(Note.INTENT_NOTE_POSITION, -1);
 
         isForNoteAdding = (currentNoteIndex == -1);
 
@@ -88,12 +136,16 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             currentNote.setHeading(noteHeading);
             currentNote.setBody("");
+
         } else {
             //currentNoteIndex is greater than -1, user is editing an existing note
             currentNote = MainActivity.notesList.get(currentNoteIndex);
 
             noteHeading = currentNote.getHeading();
             noteBody = currentNote.getBody();
+
+            originalHeading = noteHeading;
+            originalBody = noteBody;
         }
 
         String noteTimeStamp = currentNote.getTimeStamp();
@@ -119,10 +171,6 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().isBlank()) { //Check if a note is blank and if it is, undo the heading change
-                    Toast.makeText(NoteEditorActivity.this, R.string.blank_note_warning, Toast.LENGTH_LONG).show();
-                    currentNote.setHeading(noteHeading);
-                }
             }
         });
 
@@ -148,29 +196,76 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        super.finish();
+        if (isForNoteAdding) {
+            //New note that needs be checked for validity before adding
 
-        if (!isForNoteAdding) {
-            //Not a new note that needs to be checked for validity
-            return;
+            String timestamp = currentNote.getNumericalTimeStamp();
+
+            String presetHeading = noteHeadingEditText.getText().toString();
+            String presetBody = noteBodyEditText.getText().toString();
+
+            //User modified the body
+            boolean bodyModified = presetHeading.equals(timestamp) && !presetBody.isBlank();
+
+            //User modified the title to a non-blank title
+            boolean headingModified = !presetHeading.equals(timestamp) && !presetHeading.isBlank();
+
+            if (headingModified || bodyModified) {
+                MainActivity.notesList.add(currentNote);
+
+                NotesIO.saveNotesToStorage(getApplicationContext());
+
+                setNewNoteAddedResult();
+
+            }
+
+            super.finish();
+            
+        } else {
+            //The note was being edited, check if changes are valid
+
+            String currentHeader = noteHeadingEditText.getText().toString();
+            String currentBody = noteBodyEditText.getText().toString();
+
+            if (!currentHeader.isBlank() && isNoteModified(currentHeader, currentBody)) {
+                //Note has changes which are valid and can be saved
+
+                setNoteEditedResult();
+
+            } else if (currentHeader.isBlank()) {
+                //Header is blank, invalidate changes
+
+                currentNote.setHeading(originalHeading);
+                currentNote.setBody(originalBody);
+
+                //Notify the user that the changes made have not been saved.
+                Toast.makeText(NoteEditorActivity.this, R.string.editor_blank_heading, Toast.LENGTH_LONG).show();
+            }
+
+            super.finish();
         }
 
-        String timestamp = currentNote.getNumericalTimeStamp();
+    }
 
-        String presetHeading = noteHeadingEditText.getText().toString();
-        String presetBody = noteBodyEditText.getText().toString();
+    /**
+     * Check to see if the note being edited has been changed.
+     * <p>This method compares the saved note's heading and title to
+     * the current state.
+     * If the two states are identical, the note has not been changed.
+     *
+     * @param currentHeading the text in the {@link #noteHeadingEditText heading}.
+     * @param currentBody    the text in the {@link #noteBodyEditText body}.
+     * @return {@code true} - if either the heading or body have been changed
+     * <p>    {@code false} - if both heading and body are unchanged.
+     * @since 1.1.0-beta.3
+     */
 
-        if (presetHeading.equals(timestamp) && !presetBody.isBlank()) {
-            //The body has been modified, save as new note
-            MainActivity.notesList.add(currentNote);
+    private boolean isNoteModified(String currentHeading, String currentBody) {
+        //False if the current and original headings are identical
+        if (!currentHeading.equals(originalHeading)) return true;
 
-            NotesIO.saveNotesToStorage(getApplicationContext());
-        } else if (!presetHeading.isBlank() && !presetHeading.equals(timestamp)) {
-            //The heading has been modified and is not blank, save as new note
-            MainActivity.notesList.add(currentNote);
-
-            NotesIO.saveNotesToStorage(getApplicationContext());
-        }
+        //False if the current and original bodies are identical
+        return !currentBody.equals(originalBody);
     }
 
     /**
@@ -188,5 +283,33 @@ public class NoteEditorActivity extends AppCompatActivity {
         } else {
             return numOfCharsInBody + " " + AppResources.getStringResource(R.string.editor_note_info_character_num, NoteEditorActivity.this);
         }
+    }
+
+    /**
+     * Set the result of this activity when a new note has been added.
+     * <p>When the user is in this activity to add a new note and the
+     * conditions for adding one are met, set a "new note added" result.
+     *
+     * @since 1.1.0-beta.3
+     */
+
+    private void setNewNoteAddedResult() {
+        Intent newNoteIntent = new Intent();
+        newNoteIntent.putExtra(NEW_NOTE_ADDED_EXTRA, true);
+
+        setResult(RESULT_OK, newNoteIntent);
+    }
+
+    /**
+     * Set the result of this activity when {@link #currentNote this note} has been edited.
+     *
+     * @since 1.1.0-beta.3
+     */
+
+    private void setNoteEditedResult() {
+        Intent noteEditedIntent = new Intent();
+        noteEditedIntent.putExtra(EDITED_NOTE_INDEX_EXTRA, currentNoteIndex);
+
+        setResult(RESULT_OK, noteEditedIntent);
     }
 }
