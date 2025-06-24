@@ -216,8 +216,11 @@ public class NoteEditorActivity extends AppCompatActivity {
                 NotesIO.saveNotesToStorage(getApplicationContext());
 
                 setNewNoteAddedResult();
+
             }
 
+            super.finish();
+            
         } else {
             //The note was being edited, check if changes are valid
 
