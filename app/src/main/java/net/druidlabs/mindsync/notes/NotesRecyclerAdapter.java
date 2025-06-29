@@ -60,7 +60,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         noteHeadingTextView.setText(note.getHeading());
         noteBodyTextView.setText(note.getBody());
 
-        int pos = holder.getLayoutPosition();
+        int pos = holder.getAdapterPosition();
 
         noteCardView.setOnClickListener(v -> {
             if (pos == RecyclerView.NO_POSITION) {
