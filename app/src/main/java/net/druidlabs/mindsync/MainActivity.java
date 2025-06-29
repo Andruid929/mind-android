@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
                     NotesIO.saveNotesToStorage(uiContext);
 
-                    String noteDeletionConfirmationText = noteHeading + " " +
+                    String noteDeletionConfirmationText = "\"" + noteHeading + "\" " +
                             AppResources.getStringResource(R.string.note_deleted_toast, uiContext);
 
                     Toast.makeText(uiContext, noteDeletionConfirmationText, Toast.LENGTH_SHORT).show();
