@@ -21,6 +21,7 @@ import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notesio.NotesIO;
 import net.druidlabs.mindsync.util.AppResources;
+import net.druidlabs.mindsync.util.StringUtils;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -131,11 +132,13 @@ public class NoteEditorActivity extends AppCompatActivity {
             //currentNoteIndex is -1, user is creating a new note
             currentNote = new Note(Note.TEST_HEADING, Note.TEST_BODY);
 
-            noteHeading = currentNote.getNumericalTimeStamp();
+            noteHeading = "";
             noteBody = "";
 
             currentNote.setHeading(noteHeading);
-            currentNote.setBody("");
+            currentNote.setBody(noteBody);
+
+            noteHeadingEditText.setHint(currentNote.getNumericalTimeStamp());
 
         } else {
             //currentNoteIndex is greater than -1, user is editing an existing note
@@ -151,7 +154,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         String noteTimeStamp = currentNote.getTimeStamp();
 
         int numOfCharsInBody = noteBody.length();
-
 
         bodyCharCountTextView.setText(getCharText(numOfCharsInBody));
         noteCreationTimeTextView.setText(noteTimeStamp);
@@ -201,16 +203,27 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             String timestamp = currentNote.getNumericalTimeStamp();
 
-            String presetHeading = noteHeadingEditText.getText().toString();
-            String presetBody = noteBodyEditText.getText().toString();
+            String currentHeading = noteHeadingEditText.getText().toString();
+            String currentBody = noteBodyEditText.getText().toString();
 
-            //User modified the body
-            boolean bodyModified = presetHeading.equals(timestamp) && !presetBody.isBlank();
+            boolean headingModified = StringUtils.isInputBlank(currentHeading);
 
-            //User modified the title to a non-blank title
-            boolean headingModified = !presetHeading.equals(timestamp) && !presetHeading.isBlank();
+            boolean bodyModified = StringUtils.isInputBlank(currentBody);
 
-            if (headingModified || bodyModified) {
+            if (!headingModified) {
+                currentNote.setHeading(currentHeading);
+                currentNote.setBody(currentBody);
+
+                MainActivity.notesList.add(currentNote);
+
+                NotesIO.saveNotesToStorage(getApplicationContext());
+
+                setNewNoteAddedResult();
+
+            } else if (!bodyModified) {
+                currentNote.setHeading(timestamp);
+                currentNote.setBody(currentBody);
+
                 MainActivity.notesList.add(currentNote);
 
                 NotesIO.saveNotesToStorage(getApplicationContext());
@@ -220,19 +233,21 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
 
             super.finish();
-            
+
         } else {
             //The note was being edited, check if changes are valid
 
             String currentHeader = noteHeadingEditText.getText().toString();
             String currentBody = noteBodyEditText.getText().toString();
 
-            if (!currentHeader.isBlank() && isNoteModified(currentHeader, currentBody)) {
+            boolean isHeadingBlank = StringUtils.isInputBlank(currentHeader);
+
+            if (!isHeadingBlank && isNoteModified(currentHeader, currentBody)) {
                 //Note has changes which are valid and can be saved
 
                 setNoteEditedResult();
 
-            } else if (currentHeader.isBlank()) {
+            } else if (isHeadingBlank) {
                 //Header is blank, invalidate changes
 
                 currentNote.setHeading(originalHeading);
