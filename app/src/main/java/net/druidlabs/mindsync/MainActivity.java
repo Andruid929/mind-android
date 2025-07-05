@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
+import net.druidlabs.mindsync.activities.SettingsActivity;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notes.NoteClickListener;
 import net.druidlabs.mindsync.notes.NotesRecyclerAdapter;
@@ -144,6 +145,14 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         viewSrcCodeItem.setOnMenuItemClickListener(item -> {
             Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android/"));
             startActivity(openGitHubIntent);
+            return true;
+        });
+
+        MenuItem openSettingsActivity = homeDrawerMenu.findItem(R.id.settings_menu_item);
+
+        openSettingsActivity.setOnMenuItemClickListener(item -> {
+            Intent openSettigsIntent = new Intent(appContext, SettingsActivity.class);
+            startActivity(openSettigsIntent);
             return true;
         });
 

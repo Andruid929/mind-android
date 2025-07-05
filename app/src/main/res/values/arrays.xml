@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Choose theme preference -->
+    <string-array name="prefs_note_choose_theme_keys">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Black(OLED only)</item>
+        <item>Follow system</item>
+    </string-array>
+
+    <string-array name="prefs_note_choose_theme_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+
+    <!-- Notes timestamp format preference -->
+    <string-array name="prefs_note_timestamp_format_keys">
+        <item>11 June 2025, 18:32</item>
+        <item>June 11 2025, 18:32</item>
+        <item>2025 11 June, 18:32</item>
+    </string-array>
+    <string-array name="prefs_note_timestamp_format_values">
+        <item>dd MMMM yyyy, HH:mm</item>
+        <item>MMMM dd yyyy, HH:mm</item>
+        <item>yyyy dd MMMM, HH:mm</item>
+    </string-array>
+
+</resources>

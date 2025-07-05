@@ -3,6 +3,7 @@
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
 
+
     <!-- Home page (MainActivity) -->
     <string name="home_add_note_btn">Add new note</string>
     <string name="home_expand_add_btn">Show add note buttons</string>
@@ -20,11 +21,6 @@
     <string name="cnt_default_header">Note header</string>
     <string name="cnt_default_body">This is a default note body</string>
 
-    <!-- Note add dialog -->
-    <string name="add_note_dialog_text">Add a new note</string>
-    <string name="add_note_dialog_pos_btn">Add</string>
-    <string name="add_note_dialog_neg_btn">Cancel</string>
-
     <!-- Note options dialog -->
     <string name="note_options_header">Note header</string>
     <string name="note_options_body">Note body</string>
@@ -37,6 +33,7 @@
     <string name="note_del_confirm_neg_btn">Delete</string>
     <string name="note_del_confirm_text">will be deleted, proceed?</string>
     <string name="note_deleted_toast">deleted</string>
+
 
     <!-- Note Editor Activity -->
     <string name="editor_default_note_header">Note header</string>
@@ -51,5 +48,18 @@
     <string name="editor_note_info_character_num">characters</string>
     <string name="editor_note_info_character">character</string>
     <string name="editor_note_info_creation_time">00:00</string>
+
+
+    <!-- Preferences -->
+    <string name="pref_category_ui_settings">UI settings</string>
+    <string name="pref_category_notes">Notes</string>
+
+    <!-- Preference summaries -->
+    <string name="pref_sum_note_timestamp_format">Pick how the note timestamp appears in the bottom of the note editing page</string>
+    <string name="pref_sum_disable_blank_heading_toast">Disable the unsaved changes pop up when you leave a note\'s title blank</string>
+    <string name="pref_choose_theme">System theme</string>
+    <string name="pref_note_timestamp_format">Note timestamp format</string>
+    <string name="pref_disable_blank_heading_toast">Disable blank heading notification</string>
+
 
 </resources>
