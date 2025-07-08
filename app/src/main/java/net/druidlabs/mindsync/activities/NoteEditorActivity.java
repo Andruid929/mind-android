@@ -20,6 +20,7 @@ import net.druidlabs.mindsync.MainActivity;
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notesio.NotesIO;
+import net.druidlabs.mindsync.preferences.AppPreferences;
 import net.druidlabs.mindsync.util.AppResources;
 import net.druidlabs.mindsync.util.StringUtils;
 
@@ -151,7 +152,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             originalBody = noteBody;
         }
 
-        String noteTimeStamp = currentNote.getTimeStamp();
+        String timestampFormat = AppPreferences.noteTimeStampFormat(this);
+
+        String noteTimeStamp = currentNote.getTimeStamp(timestampFormat);
 
         int numOfCharsInBody = noteBody.length();
 
@@ -254,7 +257,11 @@ public class NoteEditorActivity extends AppCompatActivity {
                 currentNote.setBody(originalBody);
 
                 //Notify the user that the changes made have not been saved.
-                Toast.makeText(NoteEditorActivity.this, R.string.editor_blank_heading, Toast.LENGTH_LONG).show();
+                boolean blankHeadingToastEnabled = AppPreferences.isBlankHeadingToastEnabled(this);
+
+                if (blankHeadingToastEnabled) {
+                    Toast.makeText(NoteEditorActivity.this, R.string.editor_blank_heading, Toast.LENGTH_LONG).show();
+                }
             }
 
             super.finish();

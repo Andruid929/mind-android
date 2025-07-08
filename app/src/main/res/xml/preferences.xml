@@ -5,9 +5,9 @@
     <PreferenceCategory app:title="@string/pref_category_ui_settings">
 
         <ListPreference
-            android:defaultValue="3"
-            app:entries="@array/prefs_note_choose_theme_keys"
-            app:entryValues="@array/prefs_note_choose_theme_values"
+            android:defaultValue="0"
+            app:entries="@array/prefs_ui_choose_theme_keys"
+            app:entryValues="@array/prefs_ui_choose_theme_values"
             app:key="prefs_choose_theme"
             app:title="@string/pref_choose_theme" />
 
@@ -16,6 +16,7 @@
     <PreferenceCategory app:title="@string/pref_category_notes">
 
         <ListPreference
+            app:defaultValue="0"
             app:key="prefs_note_timestamp_format"
             app:summary="@string/pref_sum_note_timestamp_format"
             app:entries="@array/prefs_note_timestamp_format_keys"
@@ -24,8 +25,9 @@
 
         <SwitchPreferenceCompat
             app:key="prefs_blank_header_toast_disable"
-            app:summary="@string/pref_sum_disable_blank_heading_toast"
-            app:title="@string/pref_disable_blank_heading_toast" />
+            app:summary="@string/pref_sum_enable_blank_heading_toast"
+            app:title="@string/pref_enable_blank_heading_toast"
+            app:defaultValue="true"/>
 
     </PreferenceCategory>
 

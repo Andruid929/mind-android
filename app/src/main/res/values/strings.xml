@@ -51,15 +51,16 @@
 
 
     <!-- Preferences -->
+    <string name="pref_choose_theme">App theme</string>
+    <string name="pref_note_timestamp_format">Note timestamp format</string>
+    <string name="pref_enable_blank_heading_toast">Enable blank heading notification</string>
+
+    <!-- Preference categories -->
     <string name="pref_category_ui_settings">UI settings</string>
     <string name="pref_category_notes">Notes</string>
 
     <!-- Preference summaries -->
     <string name="pref_sum_note_timestamp_format">Pick how the note timestamp appears in the bottom of the note editing page</string>
-    <string name="pref_sum_disable_blank_heading_toast">Disable the unsaved changes pop up when you leave a note\'s title blank</string>
-    <string name="pref_choose_theme">System theme</string>
-    <string name="pref_note_timestamp_format">Note timestamp format</string>
-    <string name="pref_disable_blank_heading_toast">Disable blank heading notification</string>
-
+    <string name="pref_sum_enable_blank_heading_toast">Enable the unsaved changes pop up when you leave a note\'s title blank</string>
 
 </resources>
