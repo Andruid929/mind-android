@@ -3,6 +3,7 @@
     <string name="app_name">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
 
+    <string name="go_back_btn_content_desc">Go back</string>
 
     <!-- Home page (MainActivity) -->
     <string name="home_add_note_btn">Add new note</string>
@@ -39,7 +40,6 @@
     <string name="editor_default_note_header">Note header</string>
     <string name="editor_body_hint">Start typing</string>
     <string name="editor_heading_hint">Note title here</string>
-    <string name="editor_go_back_btn_content_desc">Go back button</string>
 
     <string name="editor_blank_heading">Note title blank, changes not saved</string>
 
@@ -50,17 +50,24 @@
     <string name="editor_note_info_creation_time">00:00</string>
 
 
+    <!-- Settings activity -->
+    <string name="settings_toolbar_title">Settings</string>
+
+
     <!-- Preferences -->
     <string name="pref_choose_theme">App theme</string>
     <string name="pref_note_timestamp_format">Note timestamp format</string>
     <string name="pref_enable_blank_heading_toast">Enable blank heading notification</string>
+    <string name="pref_enable_black_theme">Enable black theme</string>
 
     <!-- Preference categories -->
     <string name="pref_category_ui_settings">UI settings</string>
-    <string name="pref_category_notes">Notes</string>
+    <string name="pref_category_notes">Notes settings</string>
 
     <!-- Preference summaries -->
+    <string name="pref_sum_choose_theme">Choose between light and dark mode or follow system theme</string>
     <string name="pref_sum_note_timestamp_format">Pick how the note timestamp appears in the bottom of the note editing page</string>
     <string name="pref_sum_enable_blank_heading_toast">Enable the unsaved changes pop up when you leave a note\'s title blank</string>
+    <string name="pref_sum_enable_black_theme">Switch from dark grey to complete black backgrounds in dark mode (OLED/AMOLED displays)</string>
 
 </resources>

@@ -6,14 +6,12 @@
         <item>Follow system</item>
         <item>Light</item>
         <item>Dark</item>
-        <item>Black (OLED/AMOLED displays)</item>
     </string-array>
 
     <string-array name="prefs_ui_choose_theme_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-        <item>3</item>
     </string-array>
 
 

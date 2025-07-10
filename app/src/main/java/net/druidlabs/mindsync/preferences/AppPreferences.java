@@ -23,6 +23,8 @@ public final class AppPreferences {
 
     static final String APP_THEME_KEY = "prefs_choose_theme";
 
+    static final String BLACK_THEME_ENABLED_KEY = "prefs_enable_black_theme";
+
     /**
      * Key for getting the blank heading notification preference.
      */
@@ -51,22 +53,32 @@ public final class AppPreferences {
 
     /**
      * Get the index of the current app theme.
-     * <p>Values will range from 0-3 where
+     * <p>Values will range from 0-2 where
      * <ul>
      *     <li>{@code 0} will mean <strong>Following system theme</strong></li>
      *     <li>{@code 1} will mean <strong>Light theme</strong></li>
      *     <li>{@code 2} will mean <strong>Dark theme</strong></li>
-     *     <li>{@code 3} will mean <strong>Black theme</strong></li>
      * </ul>
      *
      * @param context the context from which to get the shared preferences.
      * @return default shared preferences.
      */
 
-    public static int getSystemThemeIndex(Context context) {
+    public static int getAppThemeIndex(Context context) {
         String systemThemeIndexString = getPrefs(context).getString(APP_THEME_KEY, "0");
 
         return Integer.parseInt(systemThemeIndexString);
+    }
+
+    /**
+     * Get whether the black theme is enabled or not.
+     *
+     * @param context the context from which to get the shared preferences.
+     * @return {@code true} if the setting is toggled on.
+     */
+
+    public static boolean isBlackThemeEnabled(Context context) {
+        return getPrefs(context).getBoolean(BLACK_THEME_ENABLED_KEY, false);
     }
 
     /**

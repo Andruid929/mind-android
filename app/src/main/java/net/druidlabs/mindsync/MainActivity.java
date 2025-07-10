@@ -95,6 +95,17 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     private ActivityResultLauncher<Intent> newNoteResultLauncher;
     private ActivityResultLauncher<Intent> editNoteResultLauncher;
 
+    private DrawerLayout homeDrawerLayout;
+
+    private NavigationView homeNavigationView;
+
+    private MaterialToolbar homeToolbar;
+
+    private RecyclerView notesListRecyclerView;
+
+    MenuItem openSettingsActivity;
+    MenuItem viewSrcCodeItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,62 +123,22 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
         uiContext = MainActivity.this;
 
-        DrawerLayout homeDrawerLayout = findViewById(R.id.main);
-
-        NavigationView homeNavigationView = findViewById(R.id.home_drawer_nav_view);
-
-        MaterialToolbar homeToolbar = findViewById(R.id.home_toolbar);
-
-        RecyclerView notesListRecyclerView = findViewById(R.id.home_notes_gridview);
-
         setSupportActionBar(homeToolbar);
 
         notesList = NotesIO.readTypeFromStorage(appContext);
 
-        addNoteFab = findViewById(R.id.home_add_note_fab);
-        addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
+        setupUI();
 
-        notesAdapter = new NotesRecyclerAdapter(notesList, this);
+        setupNotesAdapter();
 
-        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(uiContext, 2);
-        notesListRecyclerView.setLayoutManager(notesLayoutManager);
-
-        notesListRecyclerView.setAdapter(notesAdapter);
-
-        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -25));
-
+        initialiseListeners();
+        
         homeNavigationView.bringToFront();
-
-        Menu homeDrawerMenu = homeNavigationView.getMenu();
-
-        MenuItem viewSrcCodeItem = homeDrawerMenu.findItem(R.id.view_src_code_menu_item);
-        //Open this app's official GitHub repository
-        viewSrcCodeItem.setOnMenuItemClickListener(item -> {
-            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android/"));
-            startActivity(openGitHubIntent);
-            return true;
-        });
-
-        MenuItem openSettingsActivity = homeDrawerMenu.findItem(R.id.settings_menu_item);
-
-        openSettingsActivity.setOnMenuItemClickListener(item -> {
-            Intent openSettigsIntent = new Intent(appContext, SettingsActivity.class);
-            startActivity(openSettigsIntent);
-            return true;
-        });
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout, homeToolbar,
                 R.string.home_drawer_open_desc, R.string.home_drawer_close_desc);
         homeDrawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
-
-        addNoteFab.setOnClickListener(v -> onFabExpanded());
-
-        addTextNoteFab.setOnClickListener(v -> {
-            Intent addNoteInEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
-
-            newNoteResultLauncher.launch(addNoteInEditorIntent);
-        });
 
         newNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), newNoteResultCallback());
 
@@ -208,6 +179,78 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         dialogNoteBody.setText(heldNote.getBody());
 
         noteOptionsDialog.show();
+    }
+
+    /**
+     * Instantiate UI variables.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private void setupUI() {
+        homeDrawerLayout = findViewById(R.id.main);
+
+        homeNavigationView = findViewById(R.id.home_drawer_nav_view);
+
+        homeToolbar = findViewById(R.id.home_toolbar);
+
+        notesListRecyclerView = findViewById(R.id.home_notes_gridview);
+
+        addNoteFab = findViewById(R.id.home_add_note_fab);
+        addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
+
+        Menu homeDrawerMenu = homeNavigationView.getMenu();
+
+        openSettingsActivity = homeDrawerMenu.findItem(R.id.settings_menu_item);
+
+        viewSrcCodeItem = homeDrawerMenu.findItem(R.id.view_src_code_menu_item);
+    }
+
+    /**
+     * Set event listeners.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private void initialiseListeners() {
+
+        //Open this app's official GitHub repository
+        viewSrcCodeItem.setOnMenuItemClickListener(item -> {
+            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android/"));
+            startActivity(openGitHubIntent);
+            return true;
+        });
+
+        openSettingsActivity.setOnMenuItemClickListener(item -> {
+            Intent openSettigsIntent = new Intent(appContext, SettingsActivity.class);
+            startActivity(openSettigsIntent);
+            return true;
+        });
+
+        addNoteFab.setOnClickListener(v -> onFabExpanded());
+
+        addTextNoteFab.setOnClickListener(v -> {
+            Intent addNoteInEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+
+            newNoteResultLauncher.launch(addNoteInEditorIntent);
+        });
+
+    }
+
+    /**
+     * Setup and customise notes adapter.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private void setupNotesAdapter() {
+        notesAdapter = new NotesRecyclerAdapter(notesList, this);
+
+        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(uiContext, 2);
+
+        notesListRecyclerView.setLayoutManager(notesLayoutManager);
+        notesListRecyclerView.setAdapter(notesAdapter);
+        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -25));
     }
 
     /**

@@ -8,6 +8,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.preferences.SettingsFragment;
 
@@ -24,7 +26,11 @@ public class SettingsActivity extends AppCompatActivity {
             return insets;
         });
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main, new SettingsFragment())
+                .replace(R.id.settings_fragment_layout, new SettingsFragment())
                 .commit();
+
+        MaterialToolbar settingsToolbar = findViewById(R.id.settings_toolbar);
+
+        settingsToolbar.setNavigationOnClickListener(v -> finish());
     }
 }
