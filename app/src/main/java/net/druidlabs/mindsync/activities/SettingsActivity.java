@@ -12,11 +12,13 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.preferences.SettingsFragment;
+import net.druidlabs.mindsync.util.UiUtil;
 
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UiUtil.setBlackMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);

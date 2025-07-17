@@ -23,6 +23,7 @@ import net.druidlabs.mindsync.notesio.NotesIO;
 import net.druidlabs.mindsync.preferences.AppPreferences;
 import net.druidlabs.mindsync.util.AppResources;
 import net.druidlabs.mindsync.util.StringUtils;
+import net.druidlabs.mindsync.util.UiUtil;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -101,6 +102,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UiUtil.setBlackMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_note_editor);

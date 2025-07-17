@@ -41,6 +41,7 @@ import net.druidlabs.mindsync.notesio.NotesIO;
 import net.druidlabs.mindsync.ui.Animations;
 import net.druidlabs.mindsync.util.AppResources;
 import net.druidlabs.mindsync.util.GridSpacing;
+import net.druidlabs.mindsync.util.UiUtil;
 
 import java.util.List;
 
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UiUtil.setBlackMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         setupNotesAdapter();
 
         initialiseListeners();
-        
+
         homeNavigationView.bringToFront();
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout, homeToolbar,
@@ -216,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
         //Open this app's official GitHub repository
         viewSrcCodeItem.setOnMenuItemClickListener(item -> {
-            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android/"));
+            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android"));
             startActivity(openGitHubIntent);
             return true;
         });

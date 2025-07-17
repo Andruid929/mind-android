@@ -1,7 +1,13 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.MindSync20" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <item name="colorPrimary">@color/colourPrimary</item>
+    </style>
+
+    <!-- Added in 1.2.0-beta.2 -->
+    <style name="Base.Theme.MindSync20.Black" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/colourPrimary</item>
+        <item name="android:windowBackground">@color/black</item>
     </style>
 </resources>

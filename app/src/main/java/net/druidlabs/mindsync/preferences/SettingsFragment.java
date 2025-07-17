@@ -9,6 +9,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import net.druidlabs.mindsync.R;
+import net.druidlabs.mindsync.activities.SettingsActivity;
 import net.druidlabs.mindsync.util.TimeStamp;
 import net.druidlabs.mindsync.util.UiUtil;
 
@@ -45,10 +46,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 Log.d(SETTINGS_FRAGMENT_LOG_TAG, "App theme changed to " + getAppThemeName(newPrefValue));
 
-                Intent recreateIntent = requireActivity().getIntent();
-                requireActivity().finish();
-                requireActivity().overridePendingTransition(0, 0);
-                requireActivity().startActivity(recreateIntent);
+                recreateActivity();
 
                 return true;
             });
@@ -61,6 +59,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 String outputText = "Black theme " + (newPrefValue ? "enabled" : "disabled");
 
                 Log.d(SETTINGS_FRAGMENT_LOG_TAG, outputText);
+
+                recreateActivity();
 
                 return true;
             });
@@ -117,5 +117,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             default:
                 throw new IllegalArgumentException("Unexpected theme index: " + appThemeIndex);
         }
+    }
+
+    /**
+     * Recreate the {@link SettingsActivity} to apply app theme changes.
+     *
+     * @since 1.2.0.beta.2
+     */
+
+    private void recreateActivity() {
+        Intent recreateIntent = requireActivity().getIntent();
+        requireActivity().finish();
+        requireActivity().overridePendingTransition(0, 0);
+        requireActivity().startActivity(recreateIntent);
     }
 }
