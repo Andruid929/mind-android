@@ -7,11 +7,11 @@ This project adheres to [Semantic versioning](https://semver.org/).
 
 ## [1.2.0-beta.2] - 2025-07-22
 
-## Changed
+### Changed
 
 - Timestamps to use '@' instead of '|'
 
-## Fixed
+### Fixed
 
 - App theme setting, this will now change the entire app's theme.
 - Black theme toggle will have correct black colour instead of dark grey
