@@ -1,5 +1,6 @@
 package net.druidlabs.mindsync.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -34,5 +35,13 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialToolbar settingsToolbar = findViewById(R.id.settings_toolbar);
 
         settingsToolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    @Override
+    public void finish() {
+        getSupportFragmentManager().setFragmentResultListener("fragmentRequestKey",
+                this, (requestKey, result) -> setResult(Activity.RESULT_OK));
+
+        super.finish();
     }
 }

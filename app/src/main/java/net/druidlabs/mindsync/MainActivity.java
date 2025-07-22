@@ -1,9 +1,12 @@
 package net.druidlabs.mindsync;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,12 +92,35 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
     private boolean isAddNoteFabClicked;
 
+    /**
+     * The application context.
+     */
+
     private Context appContext;
+
+    /**
+     * Activity context.
+     */
 
     private Context uiContext;
 
+    /**
+     * Result launcher for adding a new note.
+     */
+
     private ActivityResultLauncher<Intent> newNoteResultLauncher;
+
+    /**
+     * Result launcher for editing an existing note.
+     */
+
     private ActivityResultLauncher<Intent> editNoteResultLauncher;
+
+    /**
+     * Result launcher for opening the settings activity and observing theme settings changes.
+     */
+
+    private ActivityResultLauncher<Intent> appThemeChangeResultLauncher;
 
     private DrawerLayout homeDrawerLayout;
 
@@ -142,9 +168,14 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         homeDrawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
-        newNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), newNoteResultCallback());
+        newNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                newNoteResultCallback());
 
-        editNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), editedNoteResultCallback());
+        appThemeChangeResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                blackThemeEnabledCallback());
+
+        editNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                editedNoteResultCallback());
     }
 
     @Override
@@ -163,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     }
 
     @Override
+    @SuppressLint("InflateParams")
     public void onNoteLongClick(int position) {
         LayoutInflater viewInflater = LayoutInflater.from(uiContext);
 
@@ -225,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
         openSettingsActivity.setOnMenuItemClickListener(item -> {
             Intent openSettigsIntent = new Intent(appContext, SettingsActivity.class);
-            startActivity(openSettigsIntent);
+            appThemeChangeResultLauncher.launch(openSettigsIntent);
             return true;
         });
 
@@ -252,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
         notesListRecyclerView.setLayoutManager(notesLayoutManager);
         notesListRecyclerView.setAdapter(notesAdapter);
-        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -25));
+        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -20));
     }
 
     /**
@@ -315,12 +347,33 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     }
 
     /**
+     * Check if the dark theme was changed in the settings and
+     * recreate {@link MainActivity this activity}.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private ActivityResultCallback<ActivityResult> blackThemeEnabledCallback() {
+        return result -> {
+
+            final String SETTINGS_ACTIVITY_RESULT_TAG = "SettingsActivityResult";
+
+            Log.d(SETTINGS_ACTIVITY_RESULT_TAG, "Result code: " + result.getResultCode());
+
+            if (result.getResultCode() != Activity.RESULT_OK) return;
+
+            recreate();
+        };
+
+    }
+
+    /**
      * Create a new note options dialog when a note is held.
      *
      * @param position      the position/index of the note held.
      * @param dialogView    the inflated dialog layout resource
      * @param confirmDialog the inflated confirmation dialog.
-     * @param noteHeading   the heading the note held.
+     * @param noteHeading   the heading of the note held.
      * @return a new dialog builder with two buttons.
      * @since 0.10.0
      */

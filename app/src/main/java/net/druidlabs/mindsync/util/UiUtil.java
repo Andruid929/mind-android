@@ -68,10 +68,18 @@ public final class UiUtil {
 
     public static void setBlackMode(AppCompatActivity activity) {
         if (AppPreferences.isBlackThemeEnabled(activity) && isDarkModeEnabled(activity)) {
+            //Set black theme
 
             activity.setTheme(R.style.Base_Theme_MindSync20_Black);
 
-            Log.d(UI_UTIL_TAG, "Black applied to: " + activity.getComponentName().getClassName());
+            Log.d(UI_UTIL_TAG, "Black background applied to: " + activity.getComponentName().getClassName());
+
+        } else if (isDarkModeEnabled(activity)) {
+            //Set dark theme
+
+            activity.setTheme(R.style.Base_Theme_MindSync20);
+
+            Log.d(UI_UTIL_TAG, "Dark background applied to: " + activity.getComponentName().getClassName());
         }
     }
 

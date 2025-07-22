@@ -29,7 +29,7 @@ public final class TimeStamp {
      * Output: Jun 11 2025 | 18:32
      */
 
-    public static final String DEFAULT_TIMESTAMP_FORMAT = "MMM dd yyyy | HH:mm";
+    public static final String DEFAULT_TIMESTAMP_FORMAT = "MMM dd, yyyy @ HH:mm";
 
     /**
      * Output: 20250611_18:32
@@ -43,7 +43,7 @@ public final class TimeStamp {
      * @since 1.2.0-beta.1
      */
 
-    public static final String TIMESTAMP_FORMAT_A = "dd MMMM yyyy | HH:mm";
+    public static final String TIMESTAMP_FORMAT_A = "dd MMMM yyyy @ HH:mm";
 
     /**
      * Output: June 11 2025 | 18:32
@@ -51,13 +51,13 @@ public final class TimeStamp {
      * @since 1.2.0-beta.1
      */
 
-    public static final String TIMESTAMP_FORMAT_B = "MMMM dd yyyy | HH:mm";
+    public static final String TIMESTAMP_FORMAT_B = "MMMM dd, yyyy @ HH:mm";
 
     /**
      * Output: 2025 11 June | 18:32
      */
 
-    public static final String TIMESTAMP_FORMAT_C = "yyyy dd MMMM | HH:mm";
+    public static final String TIMESTAMP_FORMAT_C = "yyyy dd MMMM @ HH:mm";
 
     public static final String[] TIMESTAMP_FORMATS = {DEFAULT_TIMESTAMP_FORMAT, TIMESTAMP_FORMAT_A,
             TIMESTAMP_FORMAT_B, TIMESTAMP_FORMAT_C};
@@ -67,7 +67,6 @@ public final class TimeStamp {
      */
 
     public static final String DEFAULT_TIMESTAMP = "May 31, 2025 | 00:31";
-    public static final String DEFAULT_NUMERICAL_TIMESTAMP = "20250531_00:31";
 
     private TimeStamp() {
     }

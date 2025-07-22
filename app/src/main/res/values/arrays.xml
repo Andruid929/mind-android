@@ -17,10 +17,10 @@
 
     <!-- Notes timestamp format preference -->
     <string-array name="prefs_note_timestamp_format_keys">
-        <item>Jun 11 2025 | 18:32 (Default)</item>
-        <item>11 June 2025 | 18:32</item>
-        <item>June 11 2025 | 18:32</item>
-        <item>2025 11 June | 18:32</item>
+        <item>Jun 11, 2025 @ 18:32 (Default)</item>
+        <item>11 June 2025 @ 18:32</item>
+        <item>June 11, 2025 @ 18:32</item>
+        <item>2025, 11 June @ 18:32</item>
     </string-array>
 
     <string-array name="prefs_note_timestamp_format_values">

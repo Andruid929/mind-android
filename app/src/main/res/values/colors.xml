@@ -5,6 +5,7 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="colourPrimary">#FF58FA</color>
     <color name="textPrimaryColour">#4A4A4A</color>
+    <color name="defaultBg">#FFF7FF</color>
     <color name="notesTilesBg">#FFFFFF</color>
 
 </resources>

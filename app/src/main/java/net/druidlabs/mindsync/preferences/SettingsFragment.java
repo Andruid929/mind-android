@@ -60,6 +60,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 Log.d(SETTINGS_FRAGMENT_LOG_TAG, outputText);
 
+                //Notify host activity theme has been altered.
+                getParentFragmentManager().setFragmentResult("fragmentRequestKey", new Bundle());
+
                 recreateActivity();
 
                 return true;
