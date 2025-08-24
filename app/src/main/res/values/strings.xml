@@ -1,6 +1,6 @@
 <resources>
     <!-- App wide -->
-    <string name="app_name">Mind Editor</string>
+    <string name="app_name" translatable="false">Mind Editor</string>
     <string name="mind_acronym">Moda Is Never Dead</string>
 
     <string name="go_back_btn_content_desc">Go back</string>

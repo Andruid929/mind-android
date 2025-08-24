@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
         setSupportActionBar(homeToolbar);
 
-        notesList = NotesIO.readTypeFromStorage(appContext);
+        notesList = NotesIO.readFromStorage(appContext);
 
         setupUI();
 
