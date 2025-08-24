@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +40,6 @@ import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notes.NoteClickListener;
 import net.druidlabs.mindsync.notes.NotesRecyclerAdapter;
 import net.druidlabs.mindsync.notesio.NotesIO;
-import net.druidlabs.mindsync.ui.Animations;
 import net.druidlabs.mindsync.util.AppResources;
 import net.druidlabs.mindsync.util.GridSpacing;
 import net.druidlabs.mindsync.util.UiUtil;
@@ -67,12 +65,6 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     private FloatingActionButton addNoteFab;
 
     /**
-     * The button with the pencil icon.
-     */
-
-    private FloatingActionButton addTextNoteFab;
-
-    /**
      * The primary notes list.
      */
 
@@ -83,14 +75,6 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
      */
 
     private NotesRecyclerAdapter notesAdapter;
-
-    /**
-     * The state of the add_note button,
-     * this lets the cycle know when to start the "expand" animation.
-     * <p>False by default
-     */
-
-    private boolean isAddNoteFabClicked;
 
     /**
      * The application context.
@@ -145,8 +129,6 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
             return insets;
         });
 
-        isAddNoteFabClicked = false;
-
         appContext = getApplicationContext();
 
         uiContext = MainActivity.this;
@@ -186,16 +168,8 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     }
 
     @Override
-    public void onNoteClick(int position) {
-        Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
-        noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
-
-        editNoteResultLauncher.launch(noteEditorIntent);
-    }
-
-    @Override
     @SuppressLint("InflateParams")
-    public void onNoteLongClick(int position) {
+    public void onNoteClick(int position) {
         LayoutInflater viewInflater = LayoutInflater.from(uiContext);
 
         View dialogView = viewInflater.inflate(R.layout.note_options_dialog, null);
@@ -215,6 +189,14 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         noteOptionsDialog.show();
     }
 
+    @Override
+    public void onNoteLongClick(int position) {
+        Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+        noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
+
+        editNoteResultLauncher.launch(noteEditorIntent);
+    }
+
     /**
      * Instantiate UI variables.
      *
@@ -231,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         notesListRecyclerView = findViewById(R.id.home_notes_gridview);
 
         addNoteFab = findViewById(R.id.home_add_note_fab);
-        addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
 
         Menu homeDrawerMenu = homeNavigationView.getMenu();
 
@@ -261,9 +242,7 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
             return true;
         });
 
-        addNoteFab.setOnClickListener(v -> onFabExpanded());
-
-        addTextNoteFab.setOnClickListener(v -> {
+        addNoteFab.setOnClickListener(v -> {
             Intent addNoteInEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
 
             newNoteResultLauncher.launch(addNoteInEditorIntent);
@@ -439,59 +418,5 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
                     Toast.makeText(uiContext, noteDeletionConfirmationText, Toast.LENGTH_SHORT).show();
                 }));
-    }
-
-    /**
-     * This method gets called when the add note button is clicked.
-     *
-     * @since 0.5.0
-     */
-
-    private void onFabExpanded() {
-
-        setVisibility(isAddNoteFabClicked);
-        startAnimation(isAddNoteFabClicked);
-
-        isAddNoteFabClicked = !isAddNoteFabClicked;
-    }
-
-    /**
-     * Set the visibility of the hidden add_text note button and also make it clickable.
-     *
-     * @param clicked the state of the button, whether it has been clicked or not.
-     * @since 0.5.0
-     */
-
-    private void setVisibility(boolean clicked) {
-        if (!clicked) { //Since the button is not clicked by default, we negate the state when the button is clicked.
-            addTextNoteFab.setVisibility(View.VISIBLE);
-            addTextNoteFab.setClickable(true);
-        } else {
-            addTextNoteFab.setVisibility(View.INVISIBLE);
-            addTextNoteFab.setClickable(false);
-        }
-    }
-
-    /**
-     * Start animating the add_text note button.
-     *
-     * @param clicked the state of the button, whether it has been clicked or not.
-     * @since 0.5.0
-     */
-
-    private void startAnimation(boolean clicked) {
-        Animation fromBottom = Animations.FROM_BOTTOM.getAnimation(appContext);
-        Animation toBottom = Animations.TO_BOTTOM.getAnimation(appContext);
-
-        Animation rotateOpen = Animations.ROTATE_90_CLOCKWISE.getAnimation(appContext);
-        Animation rotateClose = Animations.ROTATE_90_ANTI_CLOCKWISE.getAnimation(appContext);
-
-        if (!clicked) {
-            addTextNoteFab.startAnimation(fromBottom);
-            addNoteFab.startAnimation(rotateOpen);
-        } else {
-            addTextNoteFab.startAnimation(toBottom);
-            addNoteFab.startAnimation(rotateClose);
-        }
     }
 }
