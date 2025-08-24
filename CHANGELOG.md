@@ -5,6 +5,17 @@ This project adheres to [Semantic versioning](https://semver.org/).
 
 ---
 
+## [1.2.0] - 2025-08-24
+
+### Changed
+
+- The + button now opens the note editor for adding a new note instead of expanding to expose the
+  text note addition button. As a result, the pencil icon has been removed
+- Flipped actions when clicking and holding on a note. Clicking now opens the note preview dialog
+  and holding opens the note editor to edit notes.
+
+---
+
 ## [1.2.0-beta.2] - 2025-07-22
 
 ### Changed
