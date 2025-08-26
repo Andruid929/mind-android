@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Choose theme preference -->
+    <string-array name="prefs_ui_choose_theme_keys">
+        <item>Follow system</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="prefs_ui_choose_theme_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+    <!-- Notes timestamp format preference -->
+    <string-array name="prefs_note_timestamp_format_keys">
+        <item>Jun 11, 2025 @ 18:32 (Default)</item>
+        <item>11 June 2025 @ 18:32</item>
+        <item>June 11, 2025 @ 18:32</item>
+        <item>2025, 11 June @ 18:32</item>
+    </string-array>
+
+    <string-array name="prefs_note_timestamp_format_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+</resources>

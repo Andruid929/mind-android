@@ -14,13 +14,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import net.druidlabs.mindsync.MainActivity;
 import net.druidlabs.mindsync.R;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notesio.NotesIO;
+import net.druidlabs.mindsync.preferences.AppPreferences;
 import net.druidlabs.mindsync.util.AppResources;
+import net.druidlabs.mindsync.util.StringUtils;
+import net.druidlabs.mindsync.util.UiUtil;
 
 /**
  * This is the activity where the note editing itself takes place.
@@ -99,6 +102,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UiUtil.setBlackMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_note_editor);
@@ -111,13 +115,12 @@ public class NoteEditorActivity extends AppCompatActivity {
         noteHeadingEditText = findViewById(R.id.editor_heading_edittext);
         noteBodyEditText = findViewById(R.id.editor_body_edittext);
 
-        MaterialButton goBackBtn = findViewById(R.id.editor_toolbar_back_btn);
+        MaterialToolbar noteEditorToolbar = findViewById(R.id.editor_toolbar);
+        noteEditorToolbar.setNavigationOnClickListener(v -> finish());
 
         bodyCharCountTextView = findViewById(R.id.editor_note_character_num_textview);
 
         TextView noteCreationTimeTextView = findViewById(R.id.editor_note_time_created_textview);
-
-        goBackBtn.setOnClickListener(v -> finish());
 
         //The clicked note's index
         currentNoteIndex = getIntent().getIntExtra(Note.INTENT_NOTE_POSITION, -1);
@@ -131,11 +134,13 @@ public class NoteEditorActivity extends AppCompatActivity {
             //currentNoteIndex is -1, user is creating a new note
             currentNote = new Note(Note.TEST_HEADING, Note.TEST_BODY);
 
-            noteHeading = currentNote.getNumericalTimeStamp();
+            noteHeading = "";
             noteBody = "";
 
             currentNote.setHeading(noteHeading);
-            currentNote.setBody("");
+            currentNote.setBody(noteBody);
+
+            noteHeadingEditText.setHint(currentNote.getNumericalTimeStamp());
 
         } else {
             //currentNoteIndex is greater than -1, user is editing an existing note
@@ -148,10 +153,11 @@ public class NoteEditorActivity extends AppCompatActivity {
             originalBody = noteBody;
         }
 
-        String noteTimeStamp = currentNote.getTimeStamp();
+        String timestampFormat = AppPreferences.noteTimeStampFormat(this);
+
+        String noteTimeStamp = currentNote.getTimeStamp(timestampFormat);
 
         int numOfCharsInBody = noteBody.length();
-
 
         bodyCharCountTextView.setText(getCharText(numOfCharsInBody));
         noteCreationTimeTextView.setText(noteTimeStamp);
@@ -201,16 +207,27 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             String timestamp = currentNote.getNumericalTimeStamp();
 
-            String presetHeading = noteHeadingEditText.getText().toString();
-            String presetBody = noteBodyEditText.getText().toString();
+            String currentHeading = noteHeadingEditText.getText().toString();
+            String currentBody = noteBodyEditText.getText().toString();
 
-            //User modified the body
-            boolean bodyModified = presetHeading.equals(timestamp) && !presetBody.isBlank();
+            boolean headingModified = StringUtils.isInputBlank(currentHeading);
 
-            //User modified the title to a non-blank title
-            boolean headingModified = !presetHeading.equals(timestamp) && !presetHeading.isBlank();
+            boolean bodyModified = StringUtils.isInputBlank(currentBody);
 
-            if (headingModified || bodyModified) {
+            if (!headingModified) {
+                currentNote.setHeading(currentHeading);
+                currentNote.setBody(currentBody);
+
+                MainActivity.notesList.add(currentNote);
+
+                NotesIO.saveNotesToStorage(getApplicationContext());
+
+                setNewNoteAddedResult();
+
+            } else if (!bodyModified) {
+                currentNote.setHeading(timestamp);
+                currentNote.setBody(currentBody);
+
                 MainActivity.notesList.add(currentNote);
 
                 NotesIO.saveNotesToStorage(getApplicationContext());
@@ -220,26 +237,32 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
 
             super.finish();
-            
+
         } else {
             //The note was being edited, check if changes are valid
 
             String currentHeader = noteHeadingEditText.getText().toString();
             String currentBody = noteBodyEditText.getText().toString();
 
-            if (!currentHeader.isBlank() && isNoteModified(currentHeader, currentBody)) {
+            boolean isHeadingBlank = StringUtils.isInputBlank(currentHeader);
+
+            if (!isHeadingBlank && isNoteModified(currentHeader, currentBody)) {
                 //Note has changes which are valid and can be saved
 
                 setNoteEditedResult();
 
-            } else if (currentHeader.isBlank()) {
+            } else if (isHeadingBlank) {
                 //Header is blank, invalidate changes
 
                 currentNote.setHeading(originalHeading);
                 currentNote.setBody(originalBody);
 
                 //Notify the user that the changes made have not been saved.
-                Toast.makeText(NoteEditorActivity.this, R.string.editor_blank_heading, Toast.LENGTH_LONG).show();
+                boolean blankHeadingToastEnabled = AppPreferences.isBlankHeadingToastEnabled(this);
+
+                if (blankHeadingToastEnabled) {
+                    Toast.makeText(NoteEditorActivity.this, R.string.editor_blank_heading, Toast.LENGTH_LONG).show();
+                }
             }
 
             super.finish();

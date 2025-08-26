@@ -62,22 +62,6 @@
             app:shapeAppearanceOverlay="@style/fab_rounded"
             app:srcCompat="@drawable/expand_add_note_fab" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/home_add_text_note_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/colourPrimary"
-            android:clickable="false"
-            android:contentDescription="@string/home_add_note_btn"
-            android:focusable="false"
-            android:visibility="invisible"
-            app:fabCustomSize="70dp"
-            app:layout_constraintBottom_toTopOf="@id/home_add_note_fab"
-            app:layout_constraintEnd_toEndOf="@id/home_add_note_fab"
-            app:layout_constraintStart_toStartOf="@id/home_add_note_fab"
-            app:shapeAppearanceOverlay="@style/fab_rounded"
-            app:srcCompat="@drawable/add_note_fab" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

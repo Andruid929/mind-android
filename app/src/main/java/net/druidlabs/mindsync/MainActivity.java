@@ -1,14 +1,16 @@
 package net.druidlabs.mindsync;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,13 +35,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import net.druidlabs.mindsync.activities.NoteEditorActivity;
+import net.druidlabs.mindsync.activities.SettingsActivity;
 import net.druidlabs.mindsync.notes.Note;
 import net.druidlabs.mindsync.notes.NoteClickListener;
 import net.druidlabs.mindsync.notes.NotesRecyclerAdapter;
 import net.druidlabs.mindsync.notesio.NotesIO;
-import net.druidlabs.mindsync.ui.Animations;
 import net.druidlabs.mindsync.util.AppResources;
 import net.druidlabs.mindsync.util.GridSpacing;
+import net.druidlabs.mindsync.util.UiUtil;
 
 import java.util.List;
 
@@ -62,12 +65,6 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     private FloatingActionButton addNoteFab;
 
     /**
-     * The button with the pencil icon.
-     */
-
-    private FloatingActionButton addTextNoteFab;
-
-    /**
      * The primary notes list.
      */
 
@@ -80,22 +77,49 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     private NotesRecyclerAdapter notesAdapter;
 
     /**
-     * The state of the add_note button,
-     * this lets the cycle know when to start the "expand" animation.
-     * <p>False by default
+     * The application context.
      */
-
-    private boolean isAddNoteFabClicked;
 
     private Context appContext;
 
+    /**
+     * Activity context.
+     */
+
     private Context uiContext;
 
+    /**
+     * Result launcher for adding a new note.
+     */
+
     private ActivityResultLauncher<Intent> newNoteResultLauncher;
+
+    /**
+     * Result launcher for editing an existing note.
+     */
+
     private ActivityResultLauncher<Intent> editNoteResultLauncher;
+
+    /**
+     * Result launcher for opening the settings activity and observing theme settings changes.
+     */
+
+    private ActivityResultLauncher<Intent> appThemeChangeResultLauncher;
+
+    private DrawerLayout homeDrawerLayout;
+
+    private NavigationView homeNavigationView;
+
+    private MaterialToolbar homeToolbar;
+
+    private RecyclerView notesListRecyclerView;
+
+    MenuItem openSettingsActivity;
+    MenuItem viewSrcCodeItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        UiUtil.setBlackMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -105,64 +129,35 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
             return insets;
         });
 
-        isAddNoteFabClicked = false;
-
         appContext = getApplicationContext();
 
         uiContext = MainActivity.this;
 
-        DrawerLayout homeDrawerLayout = findViewById(R.id.main);
-
-        NavigationView homeNavigationView = findViewById(R.id.home_drawer_nav_view);
-
-        MaterialToolbar homeToolbar = findViewById(R.id.home_toolbar);
-
-        RecyclerView notesListRecyclerView = findViewById(R.id.home_notes_gridview);
-
         setSupportActionBar(homeToolbar);
 
-        notesList = NotesIO.readTypeFromStorage(appContext);
+        notesList = NotesIO.readFromStorage(appContext);
 
-        addNoteFab = findViewById(R.id.home_add_note_fab);
-        addTextNoteFab = findViewById(R.id.home_add_text_note_fab);
+        setupUI();
 
-        notesAdapter = new NotesRecyclerAdapter(notesList, this);
+        setupNotesAdapter();
 
-        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(uiContext, 2);
-        notesListRecyclerView.setLayoutManager(notesLayoutManager);
-
-        notesListRecyclerView.setAdapter(notesAdapter);
-
-        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -25));
+        initialiseListeners();
 
         homeNavigationView.bringToFront();
-
-        Menu homeDrawerMenu = homeNavigationView.getMenu();
-
-        MenuItem viewSrcCodeItem = homeDrawerMenu.findItem(R.id.view_src_code_menu_item);
-        //Open this app's official GitHub repository
-        viewSrcCodeItem.setOnMenuItemClickListener(item -> {
-            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android/"));
-            startActivity(openGitHubIntent);
-            return true;
-        });
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, homeDrawerLayout, homeToolbar,
                 R.string.home_drawer_open_desc, R.string.home_drawer_close_desc);
         homeDrawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
-        addNoteFab.setOnClickListener(v -> onFabExpanded());
+        newNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                newNoteResultCallback());
 
-        addTextNoteFab.setOnClickListener(v -> {
-            Intent addNoteInEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+        appThemeChangeResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                blackThemeEnabledCallback());
 
-            newNoteResultLauncher.launch(addNoteInEditorIntent);
-        });
-
-        newNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), newNoteResultCallback());
-
-        editNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), editedNoteResultCallback());
+        editNoteResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                editedNoteResultCallback());
     }
 
     @Override
@@ -173,15 +168,8 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     }
 
     @Override
+    @SuppressLint("InflateParams")
     public void onNoteClick(int position) {
-        Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
-        noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
-
-        editNoteResultLauncher.launch(noteEditorIntent);
-    }
-
-    @Override
-    public void onNoteLongClick(int position) {
         LayoutInflater viewInflater = LayoutInflater.from(uiContext);
 
         View dialogView = viewInflater.inflate(R.layout.note_options_dialog, null);
@@ -199,6 +187,83 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
         dialogNoteBody.setText(heldNote.getBody());
 
         noteOptionsDialog.show();
+    }
+
+    @Override
+    public void onNoteLongClick(int position) {
+        Intent noteEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+        noteEditorIntent.putExtra(Note.INTENT_NOTE_POSITION, position); //Send the clicked note's index to the NoteEditorActivity
+
+        editNoteResultLauncher.launch(noteEditorIntent);
+    }
+
+    /**
+     * Instantiate UI variables.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private void setupUI() {
+        homeDrawerLayout = findViewById(R.id.main);
+
+        homeNavigationView = findViewById(R.id.home_drawer_nav_view);
+
+        homeToolbar = findViewById(R.id.home_toolbar);
+
+        notesListRecyclerView = findViewById(R.id.home_notes_gridview);
+
+        addNoteFab = findViewById(R.id.home_add_note_fab);
+
+        Menu homeDrawerMenu = homeNavigationView.getMenu();
+
+        openSettingsActivity = homeDrawerMenu.findItem(R.id.settings_menu_item);
+
+        viewSrcCodeItem = homeDrawerMenu.findItem(R.id.view_src_code_menu_item);
+    }
+
+    /**
+     * Set event listeners.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private void initialiseListeners() {
+
+        //Open this app's official GitHub repository
+        viewSrcCodeItem.setOnMenuItemClickListener(item -> {
+            Intent openGitHubIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Andruid929/mind-android"));
+            startActivity(openGitHubIntent);
+            return true;
+        });
+
+        openSettingsActivity.setOnMenuItemClickListener(item -> {
+            Intent openSettigsIntent = new Intent(appContext, SettingsActivity.class);
+            appThemeChangeResultLauncher.launch(openSettigsIntent);
+            return true;
+        });
+
+        addNoteFab.setOnClickListener(v -> {
+            Intent addNoteInEditorIntent = new Intent(uiContext, NoteEditorActivity.class);
+
+            newNoteResultLauncher.launch(addNoteInEditorIntent);
+        });
+
+    }
+
+    /**
+     * Setup and customise notes adapter.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private void setupNotesAdapter() {
+        notesAdapter = new NotesRecyclerAdapter(notesList, this);
+
+        RecyclerView.LayoutManager notesLayoutManager = new GridLayoutManager(uiContext, 2);
+
+        notesListRecyclerView.setLayoutManager(notesLayoutManager);
+        notesListRecyclerView.setAdapter(notesAdapter);
+        notesListRecyclerView.addItemDecoration(new GridSpacing(2, -20));
     }
 
     /**
@@ -261,12 +326,33 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
     }
 
     /**
+     * Check if the dark theme was changed in the settings and
+     * recreate {@link MainActivity this activity}.
+     *
+     * @since 1.2.0-beta.2
+     */
+
+    private ActivityResultCallback<ActivityResult> blackThemeEnabledCallback() {
+        return result -> {
+
+            final String SETTINGS_ACTIVITY_RESULT_TAG = "SettingsActivityResult";
+
+            Log.d(SETTINGS_ACTIVITY_RESULT_TAG, "Result code: " + result.getResultCode());
+
+            if (result.getResultCode() != Activity.RESULT_OK) return;
+
+            recreate();
+        };
+
+    }
+
+    /**
      * Create a new note options dialog when a note is held.
      *
      * @param position      the position/index of the note held.
      * @param dialogView    the inflated dialog layout resource
      * @param confirmDialog the inflated confirmation dialog.
-     * @param noteHeading   the heading the note held.
+     * @param noteHeading   the heading of the note held.
      * @return a new dialog builder with two buttons.
      * @since 0.10.0
      */
@@ -327,64 +413,10 @@ public class MainActivity extends AppCompatActivity implements NoteClickListener
 
                     NotesIO.saveNotesToStorage(uiContext);
 
-                    String noteDeletionConfirmationText = noteHeading + " " +
+                    String noteDeletionConfirmationText = "\"" + noteHeading + "\" " +
                             AppResources.getStringResource(R.string.note_deleted_toast, uiContext);
 
                     Toast.makeText(uiContext, noteDeletionConfirmationText, Toast.LENGTH_SHORT).show();
                 }));
-    }
-
-    /**
-     * This method gets called when the add note button is clicked.
-     *
-     * @since 0.5.0
-     */
-
-    private void onFabExpanded() {
-
-        setVisibility(isAddNoteFabClicked);
-        startAnimation(isAddNoteFabClicked);
-
-        isAddNoteFabClicked = !isAddNoteFabClicked;
-    }
-
-    /**
-     * Set the visibility of the hidden add_text note button and also make it clickable.
-     *
-     * @param clicked the state of the button, whether it has been clicked or not.
-     * @since 0.5.0
-     */
-
-    private void setVisibility(boolean clicked) {
-        if (!clicked) { //Since the button is not clicked by default, we negate the state when the button is clicked.
-            addTextNoteFab.setVisibility(View.VISIBLE);
-            addTextNoteFab.setClickable(true);
-        } else {
-            addTextNoteFab.setVisibility(View.INVISIBLE);
-            addTextNoteFab.setClickable(false);
-        }
-    }
-
-    /**
-     * Start animating the add_text note button.
-     *
-     * @param clicked the state of the button, whether it has been clicked or not.
-     * @since 0.5.0
-     */
-
-    private void startAnimation(boolean clicked) {
-        Animation fromBottom = Animations.FROM_BOTTOM.getAnimation(appContext);
-        Animation toBottom = Animations.TO_BOTTOM.getAnimation(appContext);
-
-        Animation rotateOpen = Animations.ROTATE_90_CLOCKWISE.getAnimation(appContext);
-        Animation rotateClose = Animations.ROTATE_90_ANTI_CLOCKWISE.getAnimation(appContext);
-
-        if (!clicked) {
-            addTextNoteFab.startAnimation(fromBottom);
-            addNoteFab.startAnimation(rotateOpen);
-        } else {
-            addTextNoteFab.startAnimation(toBottom);
-            addNoteFab.startAnimation(rotateClose);
-        }
     }
 }

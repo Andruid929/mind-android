@@ -49,8 +49,13 @@ public final class Note {
 
     private String body;
 
-    private final String timeStamp;
-    private final String numericalTimestamp;
+    /**
+     * The time and date that this note was created in epoch milliseconds.
+     *
+     * @since 1.2.0-beta-1
+     */
+
+    private final long creationTimeInEpochMillis;
 
     /**
      * Get a new note instance.
@@ -66,10 +71,7 @@ public final class Note {
         this.heading = heading;
         this.body = body;
 
-        TimeStamp time = TimeStamp.createTimestamp();
-
-        timeStamp = time.getTimeStamp();
-        numericalTimestamp = time.getNumericalTimeStamp();
+        creationTimeInEpochMillis = System.currentTimeMillis();
 
         if (heading.isBlank()) {
             return;
@@ -130,14 +132,21 @@ public final class Note {
 
     /**
      * This note's timestamp.
+     * <p>{@code timestampFormat} parameter added in 1.2.0-beta-1
      *
+     * @param timestampFormat the format to get this timestamp in.
      * @return the date and time this note was created.
      * @since 0.10.0
      */
     @NonNull
-    public String getTimeStamp() {
-        return Objects.requireNonNullElse(timeStamp, TimeStamp.DEFAULT_TIMESTAMP);
+    public String getTimeStamp(String timestampFormat) {
+        if (creationTimeInEpochMillis == 0) {
+            //No saved timestamp and since primitive long can't be null, 0 is returned
 
+            return TimeStamp.DEFAULT_TIMESTAMP;
+        }
+
+        return TimeStamp.getTimeStamp(timestampFormat, creationTimeInEpochMillis);
     }
 
     /**
@@ -149,8 +158,7 @@ public final class Note {
 
     @NonNull
     public String getNumericalTimeStamp() {
-        return Objects.requireNonNullElse(numericalTimestamp, TimeStamp.DEFAULT_NUMERICAL_TIMESTAMP);
-
+        return TimeStamp.getNumericalTimeStamp();
     }
 
     @Override
@@ -158,11 +166,11 @@ public final class Note {
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
         return Objects.equals(heading, note.heading) && Objects.equals(body, note.body)
-                && Objects.equals(timeStamp, note.timeStamp) && Objects.equals(numericalTimestamp, note.numericalTimestamp);
+                && creationTimeInEpochMillis == note.creationTimeInEpochMillis;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(heading, body, timeStamp, numericalTimestamp);
+        return Objects.hash(heading, body, creationTimeInEpochMillis);
     }
 }

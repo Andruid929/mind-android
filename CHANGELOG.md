@@ -5,20 +5,76 @@ This project adheres to [Semantic versioning](https://semver.org/).
 
 ---
 
+## [1.2.0] - 2025-08-24
+
+### Changed
+
+- The + button now opens the note editor for adding a new note instead of expanding to expose the
+  text note addition button. As a result, the pencil icon has been removed
+- Flipped actions when clicking and holding on a note. Clicking now opens the note preview dialog
+  and holding opens the note editor to edit notes.
+
+---
+
+## [1.2.0-beta.2] - 2025-07-22
+
+### Changed
+
+- Timestamps to use '@' instead of '|'
+
+### Fixed
+
+- App theme setting, this will now change the entire app's theme.
+- Black theme toggle will have correct black colour instead of dark grey
+
+---
+
+## [1.2.0-beta.1] - 2025-07-08
+
+### Added
+
+- Settings page with three new settings
+
+### Changed
+
+- New note title placeholder is now a hint instead of text
+
+### Notes
+
+- App theme setting will not change theme
+- More note timestamp formats coming soon
+
+---
+
+## [1.1.0] - 2025-06-29
+
+### Added
+
+- Confirmation pop-up when deleting notes
+- Clickable URLs, eMails and phone numbers in Note preview
+
+### Changed
+
+- The way new notes are added
+- Spacing between notes
+- New note title placeholder timestamp
+
+---
+
 ## [1.1.0-beta.3] - 2025-06-24
 
-## Fixed
+### Fixed
 
 - Crashes when deleting notes
 - Note body preview being cut off
 
-## Changed
+### Changed
 
 - Annoying Toast when note title is empty in note editor removed,
   it will only pop up when you exit the editor with the note title empty.
 - All changes to the note will be invalidated when the note title is left blank.
 
-## Added
+### Added
 
 - Note preview body auto linking; links, emails and phone numbers in the note body are now
   clickable.
@@ -28,17 +84,17 @@ This project adheres to [Semantic versioning](https://semver.org/).
 
 ## [1.1.0-beta.2] - 2025-06-21
 
-## Changed
+### Changed
 
 - Spacing between two notes
 - Note timestamp when creating a new note
 
-## Added
+### Added
 
 - Animation when deleting a note
 - Confirmation dialog when deleting a note
 
-## Notes
+### Notes
 
 Switched to a different UI element for notes grid, functionality remains the same but with a few
 extra glitches.
@@ -47,7 +103,7 @@ extra glitches.
 
 ## [1.1.0-beta.1] - 2025-06-17
 
-## Changed
+### Changed
 
 - Adding a new note now opens in a new page instead of a dialog.
 

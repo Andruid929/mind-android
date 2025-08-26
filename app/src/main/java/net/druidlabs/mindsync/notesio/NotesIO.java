@@ -3,6 +3,8 @@ package net.druidlabs.mindsync.notesio;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -17,13 +19,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Class to handle the saving and retrieving of the {@link MainActivity#notesList primary notes list}.
  * <p>This class uses {@link Gson Google Gson} to {@link #saveNotesToStorage(Context) serialise}
- * and {@link #readTypeFromStorage(Context) deserialise} the {@code List<Note>} that is the notes list.
+ * and {@link #readFromStorage(Context) deserialise} the {@code List<Note>} that is the notes list.
  * <p>This class was created to allow saving and retrieving of notes outside the {@code MainActivity}.
  *
  * @author Andrew Jones
@@ -44,6 +47,15 @@ public final class NotesIO {
 
     public static final String DATA_FILE_NAME = "MNDDTR.mnd";
 
+    /**
+     * The type to be saved and retrieved by Gson.
+     *
+     * @since 1.2.0-beta.3
+     */
+
+    private static final Type NOTES_LIST_TYPE = new TypeToken<List<Note>>() {
+    }.getType();
+
     private NotesIO() {
     }
 
@@ -52,10 +64,10 @@ public final class NotesIO {
      * and write it to the app's {@link Context#getFilesDir() data folder}.
      *
      * @param appContext the application context.
-     * @see #readTypeFromStorage(Context)
+     * @see #readFromStorage(Context)
      * @since 0.9.0
      */
-    public static void saveNotesToStorage(Context appContext) {
+    public static void saveNotesToStorage(@NonNull Context appContext) {
         Gson gson = new Gson();
 
         File dataFile = new File(appContext.getFilesDir().getPath() + '/' + DATA_FILE_NAME);
@@ -72,11 +84,13 @@ public final class NotesIO {
         try (FileWriter fileWriter = new FileWriter(dataFile);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
 
-            gson.toJson(MainActivity.notesList, new TypeToken<List<Note>>() {
-            }.getType(), writer);
+            gson.toJson(MainActivity.notesList, NOTES_LIST_TYPE, writer);
+
             Log.d(NOTES_IO_TAG, "Save successful");
+
         } catch (JsonIOException | IOException e) {
             Log.d(NOTES_IO_TAG, "Unable to write to save file, aborting save!");
+
             e.printStackTrace(System.err);
         }
     }
@@ -92,7 +106,7 @@ public final class NotesIO {
      * @since 0.9.0
      */
 
-    public static List<Note> readTypeFromStorage(Context appContext) {
+    public static List<Note> readFromStorage(@NonNull Context appContext) {
         Gson gson = new Gson();
 
         File dataFile = new File(appContext.getFilesDir().getPath() + '/' + DATA_FILE_NAME);
@@ -104,8 +118,7 @@ public final class NotesIO {
         try (FileReader fileReader = new FileReader(dataFile)) {
             BufferedReader reader = new BufferedReader(fileReader);
 
-            return gson.fromJson(reader, new TypeToken<List<Note>>() {
-            }.getType());
+            return gson.fromJson(reader, NOTES_LIST_TYPE);
 
         } catch (IOException | JsonSyntaxException e) {
             return new LinkedList<>();

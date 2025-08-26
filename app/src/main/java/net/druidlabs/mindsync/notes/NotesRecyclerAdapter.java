@@ -3,6 +3,8 @@ package net.druidlabs.mindsync.notes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,8 @@ import java.util.List;
 
 /**
  * The adapter for the notes {@code RecyclerView}.
+ * <p>Prior to this, a {@link GridView} with {@link ArrayAdapter} was used
+ * for notes display.
  *
  * @author Andrew Jones
  * @version 1.0
@@ -60,7 +64,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         noteHeadingTextView.setText(note.getHeading());
         noteBodyTextView.setText(note.getBody());
 
-        int pos = holder.getLayoutPosition();
+        int pos = holder.getAdapterPosition();
 
         noteCardView.setOnClickListener(v -> {
             if (pos == RecyclerView.NO_POSITION) {

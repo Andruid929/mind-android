@@ -11,24 +11,11 @@
         android:id="@+id/editor_toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        app:navigationIcon="@drawable/ic_go_back"
+        app:navigationIconTint="@color/textPrimaryColour"
+        app:navigationContentDescription="@string/go_back_btn_content_desc"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Display1">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/editor_toolbar_back_btn"
-            android:layout_width="35dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="@color/transparent"
-            android:contentDescription="@string/editor_go_back_btn_content_desc"
-            app:icon="@drawable/ic_go_back"
-            app:iconGravity="textStart"
-            app:iconPadding="1dp"
-            app:iconSize="30dp"
-            app:iconTint="@color/textPrimaryColour" />
-
-    </com.google.android.material.appbar.MaterialToolbar>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editor_heading_edittext"
